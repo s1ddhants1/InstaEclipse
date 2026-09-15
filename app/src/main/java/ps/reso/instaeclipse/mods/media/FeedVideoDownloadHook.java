@@ -1847,9 +1847,13 @@ public class FeedVideoDownloadHook {
                 ? readCompanionUri()
                 : FeatureFlags.downloaderCustomUri;
 
-        if (!uri.isEmpty()) {
-            delegateUrlToCompanionApp(ctx, url, null, filename, isVideo, username);
-            return true;
+        if (!uri.isEmpty() && ps.reso.instaeclipse.utils.core.CommonUtils.isCompanionAppInstalled(ctx)) {
+            try {
+                delegateUrlToCompanionApp(ctx, url, null, filename, isVideo, username);
+                return true;
+            } catch (Throwable t) {
+                ModuleLog.line("(IE|DL) Companion delegation failed, falling back to MediaStore: " + t.getMessage());
+            }
         }
 
         // No custom folder configured → download to a neutral temporary file first.

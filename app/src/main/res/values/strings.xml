@@ -145,7 +145,7 @@
     <!-- ================================================================ -->
 
     <!-- Common -->
-    <string name="ig_dialog_title" translatable="false">InstaEclipse 🌘</string>
+    <string name="ig_dialog_title" translatable="false">InstaEclipse</string>
     <string name="ig_dialog_subtitle">Tap a section to configure</string>
     <string name="ig_dialog_close">Close</string>
     <string name="ig_dialog_enable_disable_all">Enable/Disable All</string>
@@ -378,6 +378,8 @@
     <!-- Clean Feed options -->
     <string name="ig_dialog_clean_feed_hide_suggested">Hide Suggestions in Feed</string>
     <string name="ig_dialog_clean_feed_hide_threads">Hide Threads Suggestions</string>
+    <string name="ig_dialog_clean_feed_limit_following">Limit feed to following profiles</string>
+    <string name="ig_dialog_clean_feed_limit_following_desc">Filters the home feed to display only content from profiles you follow</string>
 
     <!-- Miscellaneous options -->
     <string name="ig_dialog_misc_disable_story_autoswipe">Disable Story Auto-Swipe</string>
@@ -535,6 +537,122 @@
     <string name="ig_update_message">A new version (%1$s) is available. Would you like to update now?</string>
     <string name="ig_update_button">Update</string>
     <string name="ig_update_later">Later</string>
+    
+    <string name="btn_close">Close</string>
+    <string name="screen_settings_title">Settings</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_faqs">FAQs</string>
+    <string name="settings_updates_desc">Check GitHub for the latest release</string>
+    <string name="settings_appearance_section">Appearance</string>
+    <string name="settings_appearance_desc">Customize app appearance</string>
+    <string name="appearance_theme_title">Theme</string>
+    <string name="theme_mode_system">System</string>
+    <string name="theme_mode_light">Light</string>
+    <string name="theme_mode_dark">Dark</string>
+    <string name="settings_about_section">About</string>
+    <string name="settings_about_desc">Version &amp; contributors</string>
+    <string name="screen_about">About</string>
+    <string name="settings_backup_section">Backup &amp; Restore</string>
+    <string name="settings_backup_desc">Export or import your configuration</string>
+    <string name="screen_backup">Backup</string>
+    <string name="backup_export_title">Export configuration</string>
+    <string name="backup_export_desc">Save all toggles, shortcuts and theme settings to a JSON file</string>
+    <string name="backup_import_title">Import configuration</string>
+    <string name="backup_import_desc">Restore settings from a previously exported JSON file</string>
+    <string name="btn_export">Export</string>
+    <string name="btn_import">Import</string>
+    <string name="config_exported">Configuration exported successfully</string>
+    <string name="config_export_failed">Export failed</string>
+    <string name="config_imported_format">%1$d settings imported</string>
+    <string name="config_import_failed">Invalid config file</string>
+    <string name="cd_back_to_settings">Back</string>
+    <string name="cd_menu_options">Menu Options</string>
+    <string name="about_app_summary">Advanced LSPosed module for Instagram offering rich customization, media downloads, ghost mode, custom theme palettes, location spoofing, and privacy controls.</string>
+    <string name="about_version_format">Version %1$s (%2$d)</string>
+    <string name="about_authors_maintainers">Authors &amp; Contributors</string>
+    <string name="about_special_thanks">Special Thanks</string>
+    <string name="about_author_role">Lead Developer</string>
+    <string name="btn_github">GitHub</string>
+    <string name="btn_instaeclipse_github">InstaEclipse GitHub</string>
+    <string name="btn_telegram_support">Telegram Community</string>
+    <string name="btn_check_updates">Check for Updates</string>
+    <string name="theme_palette_customizer_title">Instagram Theme Palette</string>
+    <string name="theme_palette_customizer_desc">Customize 15 UI color slots with live preview &amp; presets</string>
+    <string name="location_picker_title">Location Spoofing Map</string>
+    <string name="location_picker_desc">Interactive OpenStreetMap coordinate picker</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_more">More</string>
+    <string name="nav_more_full">Tools &amp; Advanced</string>
+    <string name="nav_features">Features</string>
+    <string name="nav_logs">Logs</string>
+    <string name="nav_settings">Settings</string>
+
+    <string name="cat_downloads">Downloads</string>
+    <string name="cat_downloads_short">Downloads</string>
+    <string name="cat_ghost">Ghost Mode</string>
+    <string name="cat_ghost_short">Ghost</string>
+    <string name="header_ghost_mode">Ghost Mode</string>
+    <string name="cat_feed">Feed &amp; Media</string>
+    <string name="cat_feed_short">Feed</string>
+    <string name="section_feed">Feed &amp; Timeline</string>
+    <string name="section_stories">Stories Experience</string>
+    <string name="section_reels_media">Media &amp; Quality</string>
+    <string name="section_gestures_ui">Interactions &amp; Gestures</string>
+    <string name="section_profile">Profile &amp; Social</string>
+    <string name="section_links">Links &amp; Sharing</string>
+    <string name="section_privacy_location">Privacy &amp; Location</string>
+    <string name="section_theming">Theming</string>
+    <string name="section_developer">Developer &amp; Advanced</string>
+
+    <string name="home_hero_status">Module Active</string>
+    <string name="home_hero_status_inactive">Module Inactive</string>
+    <string name="home_hero_inactive_desc">Enable module in LSPosed and restart Instagram</string>
+    <string name="home_hero_connected_desc">Connected to %1$s</string>
+    <string name="home_shortcuts_title">Quick Shortcuts</string>
+    <string name="home_no_shortcuts_pinned">No features pinned yet</string>
+    <string name="dialog_ghost_chips_title">Customize Ghost Chips</string>
+    <string name="cd_customize_ghost_chips">Customize ghost chips</string>
+    <string name="home_customize_shortcuts">Customize quick shortcuts</string>
+    <string name="dialog_add_shortcuts_title">Customize Quick Shortcuts</string>
+    <string name="btn_done">Done</string>
+    <string name="search_shortcuts_placeholder">Search features…</string>
+    <string name="no_shortcuts_available">No features match your search</string>
+    <string name="home_ghost_master_title">Ghost Mode Master</string>
+    <string name="ghost_chip_seen">Stories &amp; DMs</string>
+    <string name="ghost_chip_typing">Typing</string>
+    <string name="ghost_chip_screenshot">Screenshots</string>
+    <string name="ghost_chip_live">Live</string>
+    <string name="ghost_chip_vanish">Vanish Media</string>
+    <string name="app_amoled_title">Pure Black Theme</string>
+    <string name="app_amoled_desc">Pure Black in dark theme</string>
+    <string name="home_amoled_title">Instagram Pure Black Theme</string>
+    <string name="home_amoled_desc">Pure black in dark theme</string>
+
+    <string name="search_placeholder">Search features…</string>
+    <string name="search_quick_suggestions">Quick Suggestions</string>
+    <string name="cd_search">Search features</string>
+    <string name="cd_clear_search">Clear search</string>
+    <string name="search_hint">Try: ghost, download, amoled, reels…</string>
+    <string name="search_filtering_format">Filtering by \"%1$s\"</string>
+    <string name="search_all_results_format">%1$d results across all categories</string>
+    <string name="search_no_results_format">No results for \"%1$s\"</string>
+    <string name="search_try_different">Try searching for a different term</string>
+
+    <string name="download_folder_label">Download folder</string>
+    <string name="download_folder_none">No download folder selected</string>
+    <string name="download_folder_desc">Choose where downloaded media is saved. Uses Storage Access Framework.</string>
+    <string name="btn_change_folder">Change folder</string>
+    <string name="btn_choose_folder">Choose folder</string>
+    <string name="btn_force_stop">Force Stop</string>
+    <string name="btn_open_app">Open App</string>
+    <string name="msg_instagram_force_stopped">Instagram force-stopped</string>
+    <string name="msg_opened_instagram_settings">Opened Instagram app settings</string>
+    <string name="dialog_app_controls_title">Force Stop / Open App bar</string>
+    <string name="dialog_app_controls_desc">Show quick controls above the navigation bar</string>
+    <string name="cd_app_icon">InstaEclipse App Icon</string>
+    <string name="cd_maintainer_avatar">Maintainer Avatar</string>
+    <string name="cd_telegram_icon">Telegram Icon</string>
     <string name="ig_update_error_message">Failed to check for updates. Please try again later.</string>
 
 </resources>
