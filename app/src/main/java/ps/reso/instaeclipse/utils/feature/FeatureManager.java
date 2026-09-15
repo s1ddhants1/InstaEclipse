@@ -109,6 +109,12 @@ public class FeatureManager {
             FeatureStatusTracker.setDisabled("HideThreadsSuggestions");
         }
 
+        if (FeatureFlags.limitFollowingFeed) {
+            FeatureStatusTracker.setEnabled("LimitFeedToFollowing", R.string.ig_dialog_clean_feed_limit_following);
+        } else {
+            FeatureStatusTracker.setDisabled("LimitFeedToFollowing");
+        }
+
 
         // Miscellaneous
         if (FeatureFlags.disableTrackingLinks) {

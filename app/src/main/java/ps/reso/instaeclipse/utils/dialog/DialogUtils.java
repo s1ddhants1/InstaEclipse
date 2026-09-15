@@ -1,24 +1,37 @@
 package ps.reso.instaeclipse.utils.dialog;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.os.Bundle;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.os.Bundle;
 import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.Checkable;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
@@ -45,29 +58,102 @@ import ps.reso.instaeclipse.utils.log.ModuleLog;
 
 public class DialogUtils {
 
-    private static AlertDialog currentDialog;
+    private static Dialog currentDialog;
 
-    // ==== 0.7 DESIGN TOKENS ====
-    // One palette drives every dialog surface so the in-IG UI reads as a single, coherent sheet.
-    // Colors are ARGB ints (used directly with setColor/setTextColor — no parseColor round-trip).
-    private static final int C_SHEET    = 0xFF17171B; // bottom-sheet background (deep near-black)
-    private static final int C_CARD     = 0xFF202027; // grouped card fill (one step lighter)
-    private static final int C_PRESSED  = 0xFF2E2E37; // row pressed / highlight
-    private static final int C_HAIRLINE = 0xFF2C2C34; // dividers, borders
+    private static final int C_SHEET    = 0xFF202123;
+    private static final int C_CARD     = 0xFF202123;
+    private static final int C_PRESSED  = 0xFF2C2C30;
+    private static final int C_HAIRLINE = 0xFF2D2F33;
     private static final int C_TEXT     = 0xFFFFFFFF; // primary text
-    private static final int C_TEXT2    = 0xFF9A9AA3; // secondary/muted text
-    private static final int C_HANDLE   = 0xFF48484A; // drag handle
-    private static final int C_DANGER   = 0xFFFF453A; // destructive accent (close, delete)
-    private static final int C_ACCENT   = 0xFF0A84FF; // primary/interactive accent (back, links)
+    private static final int C_TEXT2    = 0xFFA8A8A8;
+    private static final int C_HANDLE   = 0xFF8F949E;
+    private static final int C_DANGER   = 0xFFED4956;
+    private static final int C_ACCENT   = 0xFF0095F6;
 
-    /** Section accent palette — assigned per thematic group so each menu section has its own hue. */
-    private static final String A_APPEARANCE = "#FF375F"; // vivid pink/red
-    private static final String A_PRIVACY    = "#5E5CE6"; // indigo
-    private static final String A_MEDIA      = "#FF9F0A"; // amber
-    private static final String A_TOOLS      = "#8E8E93"; // neutral gray
+    private static boolean isDarkTheme(Context ctx) {
+        return (ctx.getResources().getConfiguration().uiMode
+                & android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES;
+    }
 
-    /** Card corner radius (px) — the rounded "grouped list" idiom. */
-    private static final int R_CARD = 26;
+    private static int cSheet(Context ctx) {
+        if (ctx != null) {
+            try {
+                int resId = ctx.getResources().getIdentifier("igds_bottom_sheet_background", "color", ctx.getPackageName());
+                if (resId != 0) return ctx.getColor(resId);
+            } catch (Throwable ignored) {}
+            try {
+                int resId = ctx.getResources().getIdentifier("igds_color_elevated_background", "color", ctx.getPackageName());
+                if (resId != 0) return ctx.getColor(resId);
+            } catch (Throwable ignored) {}
+            try {
+                int resId = ctx.getResources().getIdentifier("bottom_sheet_background", "color", ctx.getPackageName());
+                if (resId != 0) return ctx.getColor(resId);
+            } catch (Throwable ignored) {}
+        }
+        return isDarkTheme(ctx) ? C_SHEET : 0xFFFFFFFF;
+    }
+
+    private static int cCard(Context ctx) { return cSheet(ctx); }
+
+    private static int cPressed(Context ctx) {
+        if (ctx != null) {
+            try {
+                int resId = ctx.getResources().getIdentifier("igds_color_highlight_background", "color", ctx.getPackageName());
+                if (resId != 0) return ctx.getColor(resId);
+            } catch (Throwable ignored) {}
+        }
+        return isDarkTheme(ctx) ? C_PRESSED : 0xFFEAEAEA;
+    }
+
+    private static int cHairline(Context ctx) {
+        if (ctx != null) {
+            try {
+                int resId = ctx.getResources().getIdentifier("igds_color_separator", "color", ctx.getPackageName());
+                if (resId != 0) return ctx.getColor(resId);
+            } catch (Throwable ignored) {}
+        }
+        return isDarkTheme(ctx) ? C_HAIRLINE : 0xFFEFEFEF;
+    }
+
+    private static int cText(Context ctx) { return isDarkTheme(ctx) ? C_TEXT : 0xFF262626; }
+    private static int cText2(Context ctx) { return isDarkTheme(ctx) ? C_TEXT2 : 0xFF737373; }
+
+    private static int cHandle(Context ctx) {
+        if (ctx != null) {
+            try {
+                int resId = ctx.getResources().getIdentifier("igds_color_secondary_icon", "color", ctx.getPackageName());
+                if (resId != 0) return ctx.getColor(resId);
+            } catch (Throwable ignored) {}
+        }
+        return isDarkTheme(ctx) ? C_HANDLE : 0xFFDBDBDB;
+    }
+
+    private static float getSheetCornerRadius(Context context) {
+        if (context != null) {
+            try {
+                int resId = context.getResources().getIdentifier("bottom_sheet_corner_radius", "dimen", context.getPackageName());
+                if (resId != 0) {
+                    float r = context.getResources().getDimension(resId);
+                    if (r > 0) return r;
+                }
+            } catch (Throwable ignored) {}
+            try {
+                int resId = context.getResources().getIdentifier("igds_bottom_sheet_corner_radius", "dimen", context.getPackageName());
+                if (resId != 0) {
+                    float r = context.getResources().getDimension(resId);
+                    if (r > 0) return r;
+                }
+            } catch (Throwable ignored) {}
+        }
+        return dp(context, 30);
+    }
+
+    private static final String A_APPEARANCE = "#0095F6";
+    private static final String A_PRIVACY    = "#0095F6";
+    private static final String A_MEDIA      = "#0095F6";
+    private static final String A_TOOLS      = "#0095F6";
+
+    private static final int R_CARD = 0;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     public static void showEclipseOptionsDialog(Context context) {
@@ -77,52 +163,26 @@ public class DialogUtils {
         outer.setOrientation(LinearLayout.VERTICAL);
 
         GradientDrawable background = new GradientDrawable();
-        background.setColor(C_SHEET);
-        background.setCornerRadii(new float[]{48, 48, 48, 48, 0, 0, 0, 0});
+        background.setColor(cSheet(context));
+        float corner = getSheetCornerRadius(context);
+        background.setCornerRadii(new float[]{corner, corner, corner, corner, 0, 0, 0, 0});
         outer.setBackground(background);
 
-        // Pinned header: drag handle + title + subtitle (stays visible while the list scrolls)
         outer.addView(createDragHandle(context));
+
         TextView title = new TextView(context);
-        title.setText(I18n.t(context, R.string.ig_dialog_title));
-        title.setTextColor(C_TEXT);
-        title.setTextSize(24);
-        title.setTypeface(null, Typeface.BOLD);
-        title.setLetterSpacing(0.01f);
-        title.setGravity(Gravity.CENTER);
-        title.setPadding(40, 10, 40, 2);
+        title.setText(stripEdgeEmoji(I18n.t(context, R.string.ig_dialog_title)));
+        title.setTextColor(cText(context));
+        title.setTextSize(17);
+        title.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        title.setGravity(Gravity.START);
+        title.setPadding(dp(context, 20), dp(context, 2), dp(context, 20), dp(context, 14));
         outer.addView(title);
+        outer.addView(createHeaderDivider(context));
 
-        TextView subtitle = new TextView(context);
-        subtitle.setText(I18n.t(context, R.string.ig_dialog_subtitle));
-        subtitle.setTextColor(C_TEXT2);
-        subtitle.setTextSize(13);
-        subtitle.setGravity(Gravity.CENTER);
-        subtitle.setPadding(40, 0, 40, 18);
-        outer.addView(subtitle);
-        outer.addView(createDivider(context));
-
-        // Scrollable middle: the feature category list + footer credit
         LinearLayout mainLayout = buildMainMenuLayout(context);
-        ScrollView scrollView = createScrollableContainer(context, mainLayout, 0.62f);
+        ScrollView scrollView = createScrollableContainer(context, mainLayout, 0.75f);
         outer.addView(scrollView);
-
-        // Pinned footer: Close button (always reachable without scrolling)
-        TextView closeButton = new TextView(context);
-        closeButton.setText(I18n.t(context, R.string.ig_dialog_close));
-        closeButton.setTextColor(C_DANGER);
-        closeButton.setTextSize(16);
-        closeButton.setPadding(40, 20, 40, 40);
-        closeButton.setGravity(Gravity.CENTER);
-        closeButton.setTypeface(null, Typeface.BOLD);
-        StateListDrawable closeStates = new StateListDrawable();
-        closeStates.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable((C_DANGER & 0x00FFFFFF) | 0x20000000));
-        closeStates.addState(new int[]{}, new ColorDrawable(Color.TRANSPARENT));
-        closeButton.setBackground(closeStates);
-        closeButton.setOnClickListener(v -> {
-            if (currentDialog != null) { try { currentDialog.dismiss(); } catch (Exception ignored) {} currentDialog = null; }
-        });
-        outer.addView(closeButton);
 
         SettingsManager.saveAllFlags();
 
@@ -137,7 +197,7 @@ public class DialogUtils {
         currentDialog = null;
 
         currentDialog = createBottomSheetDialog(context, outer);
-        currentDialog.show();
+        showBottomSheetDialog(currentDialog, outer);
     }
 
     public static void showSimpleDialog(Context context, String title, String message) {
@@ -153,7 +213,7 @@ public class DialogUtils {
     private static LinearLayout buildMainMenuLayout(Context context) {
         LinearLayout mainLayout = new LinearLayout(context);
         mainLayout.setOrientation(LinearLayout.VERTICAL);
-        mainLayout.setPadding(24, 0, 24, 0);
+        mainLayout.setPadding(0, 0, 0, dp(context, 20));
 
         // ---- APPEARANCE ---- look & feel: theme, fonts/emoji (inside theme), quality, feed cleanup
         mainLayout.addView(sectionHeader(context, I18n.t(context, R.string.feat_group_appearance)));
@@ -187,7 +247,7 @@ public class DialogUtils {
         tools.addView(createMenuRow(context, R.drawable.ic_tune, I18n.t(context, R.string.ig_dialog_menu_dev_options), A_TOOLS, () -> showDevOptions(context)));
         tools.addView(createMenuRow(context, R.drawable.ic_save, I18n.t(context, R.string.ig_dialog_menu_backup_restore), A_TOOLS, () -> showBackupRestoreOptions(context)));
         tools.addView(createMenuRow(context, R.drawable.ic_restart, I18n.t(context, R.string.ig_dialog_menu_restart), A_TOOLS, () -> showRestartSection(context)));
-        tools.addView(createMenuRow(context, R.drawable.ic_delete, I18n.t(context, R.string.ig_dialog_clear_cache), A_TOOLS, () -> showClearCacheSection(context)));
+        tools.addView(createMenuRow(context, R.drawable.ic_delete, I18n.t(context, R.string.ig_dialog_clear_cache), "#FF453A", () -> showClearCacheSection(context)));
         tools.addView(createMenuRow(context, R.drawable.ic_timer, I18n.t(context, R.string.ig_dialog_section_auto_clear_cache), A_TOOLS, () -> showAutoClearCacheSection(context)));
         tools.addView(createMenuRow(context, R.drawable.ic_info, I18n.t(context, R.string.ig_dialog_menu_about), A_TOOLS, () -> showAboutDialog(context)));
         mainLayout.addView(tools);
@@ -195,40 +255,34 @@ public class DialogUtils {
         // Footer Credit
         TextView footer = new TextView(context);
         footer.setText("@reso7200");
-        footer.setTextColor(C_TEXT2);
+        footer.setTextColor(cText2(context));
         footer.setTextSize(13);
-        footer.setPadding(16, 26, 16, 8);
+        footer.setPadding(dp(context, 20), dp(context, 20), dp(context, 20), dp(context, 8));
         footer.setGravity(Gravity.CENTER_HORIZONTAL);
         mainLayout.addView(footer);
 
         return mainLayout;
     }
 
-    /** Settings-app style group header: uppercase, letter-spaced, muted. */
     private static TextView sectionHeader(Context context, String text) {
         TextView header = new TextView(context);
-        header.setText(text == null ? "" : text.toUpperCase(java.util.Locale.getDefault()));
-        header.setTextColor(C_TEXT2);
-        header.setTextSize(12);
+        header.setText(text == null ? "" : text);
+        header.setTextColor(cText2(context));
+        header.setTextSize(13);
         header.setTypeface(null, Typeface.BOLD);
-        header.setLetterSpacing(0.08f);
-        header.setPadding(20, 22, 16, 10);
+        header.setPadding(dp(context, 20), dp(context, 16), dp(context, 20), dp(context, 6));
         return header;
     }
 
     private static LinearLayout createGroupCard(Context context) {
         LinearLayout group = new LinearLayout(context);
         group.setOrientation(LinearLayout.VERTICAL);
-        GradientDrawable groupBg = new GradientDrawable();
-        groupBg.setColor(C_CARD);
-        groupBg.setCornerRadius(R_CARD);
-        group.setBackground(groupBg);
-        group.setPadding(6, 6, 6, 6);
+        group.setPadding(0, 0, 0, 0);
         return group;
     }
 
     /** labelWithEmoji carries an emoji since it's shared with the companion app's plain-text
-     *  menu (which still wants it) — but here a real vector icon renders in the chip instead,
+     *  menu (which still wants it) — but here a real vector icon renders instead,
      *  so the emoji is stripped. Translators place it on either side of the text (leading in
      *  most locales, trailing in Arabic), so this strips from whichever end it's on rather than
      *  assuming a fixed position. */
@@ -238,25 +292,36 @@ public class DialogUtils {
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(dp(context, 8), dp(context, 9), dp(context, 10), dp(context, 9));
+        row.setPadding(dp(context, 20), dp(context, 16), dp(context, 20), dp(context, 16));
         row.setClickable(true);
         row.setFocusable(true);
-        row.setBackground(rowRipple(context, 16));
+        row.setBackground(rowRipple(context, 0));
+
+        android.widget.ImageView iconView = new android.widget.ImageView(context);
+        boolean isDestructive = "#FF453A".equalsIgnoreCase(accentHex) || "#ED4956".equalsIgnoreCase(accentHex);
+        int tint = isDestructive ? C_DANGER : cText(context);
+        Drawable icon = loadModuleIcon(iconRes, tint);
+        if (icon != null) iconView.setImageDrawable(icon);
+        iconView.setScaleType(android.widget.ImageView.ScaleType.CENTER_INSIDE);
+        LinearLayout.LayoutParams iconLp = new LinearLayout.LayoutParams(dp(context, 24), dp(context, 24));
+        iconLp.rightMargin = dp(context, 20);
+        iconView.setLayoutParams(iconLp);
 
         TextView labelView = new TextView(context);
         labelView.setText(label);
         labelView.setTextSize(16);
-        labelView.setTextColor(C_TEXT);
+        labelView.setTextColor(tint);
         labelView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
         android.widget.ImageView chevron = new android.widget.ImageView(context);
-        Drawable chev = loadModuleIcon(R.drawable.ic_chevron_right, C_TEXT2);
+        Drawable chev = loadModuleIcon(R.drawable.ic_chevron_right, cText2(context));
         if (chev != null) chevron.setImageDrawable(chev);
-        LinearLayout.LayoutParams chevLp = new LinearLayout.LayoutParams(dp(context, 20), dp(context, 20));
+        LinearLayout.LayoutParams chevLp = new LinearLayout.LayoutParams(dp(context, 18), dp(context, 18));
         chevLp.rightMargin = dp(context, 4);
         chevron.setLayoutParams(chevLp);
+        chevron.setScaleType(android.widget.ImageView.ScaleType.CENTER_INSIDE);
 
-        row.addView(buildIconChip(context, iconRes, accentHex));
+        row.addView(iconView);
         row.addView(labelView);
         row.addView(chevron);
         row.setOnClickListener(v -> onClick.run());
@@ -383,8 +448,6 @@ public class DialogUtils {
 
 
     private static View createDivider(Context context) {
-        // Low-key spacer rather than a hard hairline — the grouped cards already delimit content,
-        // so loose full-width rules between them looked dated. Kept as a small transparent gap.
         View divider = new View(context);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(context, 8));
         divider.setLayoutParams(params);
@@ -392,44 +455,56 @@ public class DialogUtils {
         return divider;
     }
 
-    /** Thin inset hairline for separating rows *inside* a grouped card (e.g. radio lists). */
-    private static View createHairline(Context context) {
+    private static View createHeaderDivider(Context context) {
         View line = new View(context);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        params.setMargins(dp(context, 14), 0, dp(context, 14), 0);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        params.leftMargin = dp(context, 16);
+        params.rightMargin = dp(context, 16);
         line.setLayoutParams(params);
-        line.setBackgroundColor(C_HAIRLINE);
+        line.setBackgroundColor(cHairline(context));
         return line;
     }
 
-    /** Rounded ripple for any tappable row; falls back to a pressed-state drawable if unavailable. */
+    private static View createHairline(Context context) {
+        View line = new View(context);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        params.setMargins(dp(context, 20), dp(context, 4), dp(context, 20), dp(context, 4));
+        line.setLayoutParams(params);
+        line.setBackgroundColor(cHairline(context));
+        return line;
+    }
+
     private static Drawable rowRipple(Context ctx, int cornerPx) {
+        int pressedColor = cPressed(ctx);
         try {
-            GradientDrawable mask = new GradientDrawable();
-            mask.setColor(Color.WHITE);
-            mask.setCornerRadius(cornerPx);
+            Drawable mask;
+            if (cornerPx > 0) {
+                GradientDrawable g = new GradientDrawable();
+                g.setColor(Color.WHITE);
+                g.setCornerRadius(cornerPx);
+                mask = g;
+            } else {
+                mask = new ColorDrawable(Color.WHITE);
+            }
             return new android.graphics.drawable.RippleDrawable(
-                    android.content.res.ColorStateList.valueOf(C_PRESSED), null, mask);
+                    android.content.res.ColorStateList.valueOf(pressedColor), null, mask);
         } catch (Throwable t) {
             StateListDrawable sld = new StateListDrawable();
-            sld.addState(new int[]{android.R.attr.state_pressed}, roundedColor(C_PRESSED, cornerPx));
+            sld.addState(new int[]{android.R.attr.state_pressed}, roundedColor(pressedColor, cornerPx));
             sld.addState(new int[]{}, new ColorDrawable(Color.TRANSPARENT));
             return sld;
         }
     }
 
-    /** One rounded "card" container idiom (matches the main menu) for grouping section rows. */
     private static LinearLayout card(Context ctx) {
         LinearLayout group = new LinearLayout(ctx);
         group.setOrientation(LinearLayout.VERTICAL);
-        GradientDrawable bg = new GradientDrawable();
-        bg.setColor(C_CARD);
-        bg.setCornerRadius(R_CARD);
-        group.setBackground(bg);
-        group.setPadding(6, 6, 6, 6);
+        group.setPadding(0, 0, 0, 0);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.topMargin = 16;
+        lp.topMargin = dp(ctx, 4);
+        lp.bottomMargin = dp(ctx, 4);
         group.setLayoutParams(lp);
         return group;
     }
@@ -636,11 +711,11 @@ public class DialogUtils {
                 row.setPadding(pad, dp(context, 12), pad, dp(context, 12));
                 TextView meta = new TextView(context);
                 meta.setText(fmt.format(new java.util.Date(e.time)) + (e.sender.isEmpty() ? "" : " · " + e.sender));
-                meta.setTextColor(C_TEXT2);
+                meta.setTextColor(cText2(context));
                 meta.setTextSize(12);
                 TextView body = new TextView(context);
                 body.setText(e.text);
-                body.setTextColor(C_TEXT);
+                body.setTextColor(cText(context));
                 body.setTextSize(15);
                 body.setPadding(0, dp(context, 4), 0, 0);
                 body.setTextIsSelectable(true);
@@ -1128,6 +1203,15 @@ public class DialogUtils {
 
         layout.addView(hideThreadsSwitch);
 
+        ToggleRow limitFollowingSwitch = createSwitch(context, R.drawable.ic_sparkle, "#64D2FF", I18n.t(context, R.string.ig_dialog_clean_feed_limit_following), FeatureFlags.limitFollowingFeed);
+
+        limitFollowingSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            FeatureFlags.limitFollowingFeed = isChecked;
+            SettingsManager.saveAllFlags();
+        });
+
+        layout.addView(limitFollowingSwitch);
+
         showSectionDialog(context, I18n.t(context, R.string.ig_dialog_section_clean_feed), layout, () -> {});
     }
 
@@ -1382,8 +1466,8 @@ public class DialogUtils {
         e.setGravity(Gravity.CENTER);
         e.setTextSize(20);
         e.setLetterSpacing(0.2f);
-        e.setTextColor(Color.WHITE);
-        e.setHintTextColor(C_TEXT2);
+        e.setTextColor(cText(ctx));
+        e.setHintTextColor(cText2(ctx));
         // Size the box to a handful of digits instead of stretching — no wide empty margins.
         e.setEms(6);
         e.setMaxLines(1);
@@ -1392,7 +1476,7 @@ public class DialogUtils {
         e.setMinimumWidth(0);
         e.setMinimumHeight(0);
         GradientDrawable bg = new GradientDrawable();
-        bg.setColor(C_CARD);
+        bg.setColor(cCard(ctx));
         bg.setCornerRadius(dpF(ctx, 12));
         e.setBackground(bg);
         e.setPadding(dpI(ctx, 12), dpI(ctx, 10), dpI(ctx, 12), dpI(ctx, 10));
@@ -1625,13 +1709,13 @@ public class DialogUtils {
             setFocusable(true);
 
             StateListDrawable bg = new StateListDrawable();
-            bg.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable(C_PRESSED));
+            bg.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable(cPressed(context)));
             bg.addState(new int[]{}, new ColorDrawable(Color.TRANSPARENT));
             setBackground(bg);
 
             TextView labelView = new TextView(context);
             labelView.setText(label);
-            labelView.setTextColor(Color.WHITE);
+            labelView.setTextColor(cText(context));
             labelView.setTextSize(16);
             labelView.setPadding(0, 20, 16, 20);
             LayoutParams lp = new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f);
@@ -2032,7 +2116,7 @@ public class DialogUtils {
 
         TextView title = new TextView(context);
         title.setText(I18n.t(context, R.string.ig_dialog_title));
-        title.setTextColor(Color.WHITE);
+        title.setTextColor(cText(context));
         title.setTextSize(22f);
         title.setTypeface(null, Typeface.BOLD);
         title.setGravity(Gravity.CENTER);
@@ -2040,7 +2124,7 @@ public class DialogUtils {
 
         TextView creator = new TextView(context);
         creator.setText(I18n.t(context, R.string.ig_dialog_about_created_by));
-        creator.setTextColor(C_TEXT2);
+        creator.setTextColor(cText2(context));
         creator.setTextSize(14f);
         creator.setGravity(Gravity.CENTER);
         creator.setPadding(0, 0, 0, 32);
@@ -2083,7 +2167,7 @@ public class DialogUtils {
 
         TextView message = new TextView(context);
         message.setText(I18n.t(context, R.string.ig_dialog_restart_message));
-        message.setTextColor(Color.WHITE);
+        message.setTextColor(cText(context));
         message.setTextSize(18f);
         message.setGravity(Gravity.CENTER);
         message.setPadding(0, 0, 0, 30);
@@ -2104,7 +2188,7 @@ public class DialogUtils {
 
         TextView message = new TextView(context);
         message.setText(I18n.t(context, R.string.ig_dialog_clear_cache_message));
-        message.setTextColor(Color.WHITE);
+        message.setTextColor(cText(context));
         message.setTextSize(16f);
         message.setGravity(Gravity.CENTER);
         message.setPadding(0, 0, 0, 30);
@@ -2179,8 +2263,9 @@ public class DialogUtils {
         container.setPadding(0, 0, 0, 0);
 
         GradientDrawable background = new GradientDrawable();
-        background.setColor(C_SHEET);
-        background.setCornerRadii(new float[]{48, 48, 48, 48, 0, 0, 0, 0});
+        background.setColor(cSheet(context));
+        float corner = getSheetCornerRadius(context);
+        background.setCornerRadii(new float[]{corner, corner, corner, corner, 0, 0, 0, 0});
         container.setBackground(background);
 
         container.addView(createDragHandle(context));
@@ -2188,23 +2273,19 @@ public class DialogUtils {
         // Header row: back arrow + title
         LinearLayout header = new LinearLayout(context);
         header.setOrientation(LinearLayout.HORIZONTAL);
-        header.setPadding(20, 2, 24, 14);
+        header.setPadding(dp(context, 12), dp(context, 4), dp(context, 20), dp(context, 12));
         header.setGravity(Gravity.CENTER_VERTICAL);
 
-        TextView backBtn = new TextView(context);
-        backBtn.setText("‹");
-        backBtn.setTextColor(C_ACCENT);
-        backBtn.setTextSize(34);
-        backBtn.setIncludeFontPadding(false);
-        backBtn.setGravity(Gravity.CENTER);
-        backBtn.setMinWidth(0);
-        backBtn.setMinimumWidth(0);
-        int bp = dp(context, 6);
-        backBtn.setPadding(bp, bp, dp(context, 16), bp);
-        StateListDrawable backBtnBg = new StateListDrawable();
-        backBtnBg.addState(new int[]{android.R.attr.state_pressed}, roundedColor(C_PRESSED, dp(context, 10)));
-        backBtnBg.addState(new int[]{}, new ColorDrawable(Color.TRANSPARENT));
-        backBtn.setBackground(backBtnBg);
+        android.widget.ImageView backBtn = new android.widget.ImageView(context);
+        Drawable backIcon = loadModuleIcon(R.drawable.ic_arrow_back, cText(context));
+        if (backIcon != null) backBtn.setImageDrawable(backIcon);
+        int bp = dp(context, 8);
+        backBtn.setPadding(bp, bp, bp, bp);
+        LinearLayout.LayoutParams backLp = new LinearLayout.LayoutParams(dp(context, 40), dp(context, 40));
+        backLp.rightMargin = dp(context, 8);
+        backBtn.setLayoutParams(backLp);
+        backBtn.setScaleType(android.widget.ImageView.ScaleType.CENTER_INSIDE);
+        backBtn.setBackground(rowRipple(context, dp(context, 20)));
         backBtn.setClickable(true);
         backBtn.setFocusable(true);
         backBtn.setOnClickListener(v -> {
@@ -2214,41 +2295,188 @@ public class DialogUtils {
         });
 
         TextView titleView = new TextView(context);
-        titleView.setText(title);
-        titleView.setTextColor(C_TEXT);
-        titleView.setTextSize(21);
-        titleView.setTypeface(null, Typeface.BOLD);
-        titleView.setLetterSpacing(0.01f);
+        titleView.setText(stripEdgeEmoji(title));
+        titleView.setTextColor(cText(context));
+        titleView.setTextSize(17);
+        titleView.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
 
         header.addView(backBtn);
         header.addView(titleView);
         container.addView(header);
-        container.addView(createDivider(context));
+        container.addView(createHeaderDivider(context));
 
-        // Content with horizontal padding
         LinearLayout contentWrapper = new LinearLayout(context);
         contentWrapper.setOrientation(LinearLayout.VERTICAL);
-        contentWrapper.setPadding(24, 0, 24, 0);
+        contentWrapper.setPadding(0, 0, 0, 0);
         contentWrapper.addView(contentLayout);
-        container.addView(contentWrapper);
-
-        container.addView(createDivider(context));
 
         // Bottom padding for nav bar
         View bottomPad = new View(context);
-        bottomPad.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 48));
-        container.addView(bottomPad);
+        bottomPad.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(context, 28)));
+        contentWrapper.addView(bottomPad);
 
-        ScrollView scrollView = createScrollableContainer(context, container);
+        ScrollView scrollView = createScrollableContainer(context, contentWrapper, 0.75f);
+        container.addView(scrollView);
 
-        currentDialog = createBottomSheetDialog(context, scrollView);
-        currentDialog.show();
+        currentDialog = createBottomSheetDialog(context, container);
+        showBottomSheetDialog(currentDialog, container);
     }
 
 
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private static int blendColors(int from, int to, float ratio) {
+        float inverse = 1f - ratio;
+        float a = Color.alpha(from) * inverse + Color.alpha(to) * ratio;
+        float r = Color.red(from) * inverse + Color.red(to) * ratio;
+        float g = Color.green(from) * inverse + Color.green(to) * ratio;
+        float b = Color.blue(from) * inverse + Color.blue(to) * ratio;
+        return Color.argb((int) a, (int) r, (int) g, (int) b);
+    }
+
+    private static float dp(Context context, float value) {
+        return value * context.getResources().getDisplayMetrics().density;
+    }
+
+    public static class IgSwitch extends View implements Checkable {
+        private boolean isChecked;
+        private float progress;
+        private ValueAnimator animator;
+        private CompoundButton.OnCheckedChangeListener onCheckedChangeListener;
+
+        private final Paint trackPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint thumbPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final RectF trackRect = new RectF();
+        private final RectF borderRect = new RectF();
+
+        private final int cTrackOff;
+        private final int cTrackOn;
+        private final int cBorderOff;
+        private final int cThumbOff;
+        private final int cThumbOn;
+
+        public IgSwitch(Context context) {
+            super(context);
+            boolean dark = isDarkTheme(context);
+            cTrackOff  = dark ? 0xFF2B3036 : 0xFFE0E0E0;
+            cTrackOn   = dark ? 0xFFFFFFFF : 0xFF262626;
+            cBorderOff = dark ? 0xFF4C4F56 : 0xFFCCCCCC;
+            cThumbOff  = dark ? 0xFFA4AAB8 : 0xFF737373;
+            cThumbOn   = dark ? 0xFF12151A : 0xFFFFFFFF;
+
+            borderPaint.setStyle(Paint.Style.STROKE);
+            borderPaint.setStrokeWidth(dp(context, 1.5f));
+
+            setClickable(true);
+            setFocusable(true);
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            setMeasuredDimension(dp(getContext(), 52), dp(getContext(), 32));
+        }
+
+        @Override
+        public boolean isChecked() {
+            return isChecked;
+        }
+
+        @Override
+        public void setChecked(boolean checked) {
+            setChecked(checked, isAttachedToWindow() && isLaidOut());
+        }
+
+        public void setChecked(boolean checked, boolean animate) {
+            boolean changed = this.isChecked != checked;
+            this.isChecked = checked;
+            if (changed && onCheckedChangeListener != null) {
+                onCheckedChangeListener.onCheckedChanged(null, checked);
+            }
+
+            float target = checked ? 1f : 0f;
+            if (animate) {
+                if (animator != null) animator.cancel();
+                animator = ValueAnimator.ofFloat(progress, target);
+                animator.setDuration(200);
+                animator.setInterpolator(new android.view.animation.DecelerateInterpolator());
+                animator.addUpdateListener(a -> {
+                    progress = (float) a.getAnimatedValue();
+                    invalidate();
+                });
+                animator.start();
+            } else {
+                if (animator != null) animator.cancel();
+                progress = target;
+                invalidate();
+            }
+        }
+
+        @Override
+        public void toggle() {
+            setChecked(!isChecked);
+        }
+
+        public void setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener listener) {
+            this.onCheckedChangeListener = listener;
+        }
+
+        @Override
+        public boolean performClick() {
+            toggle();
+            return super.performClick();
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            super.onDraw(canvas);
+            float w = getWidth();
+            float h = getHeight();
+            float r = h / 2f;
+
+            trackPaint.setColor(blendColors(cTrackOff, cTrackOn, progress));
+            trackRect.set(0, 0, w, h);
+            canvas.drawRoundRect(trackRect, r, r, trackPaint);
+
+            if (progress < 1f) {
+                float stroke = borderPaint.getStrokeWidth();
+                float inset = stroke / 2f;
+                int alpha = Math.round(255 * (1f - progress));
+                borderPaint.setColor(cBorderOff);
+                borderPaint.setAlpha(alpha);
+                borderRect.set(inset, inset, w - inset, h - inset);
+                canvas.drawRoundRect(borderRect, r - inset, r - inset, borderPaint);
+            }
+
+            Context c = getContext();
+            float rOff = dp(c, 8f);
+            float rOn  = dp(c, 12.5f);
+            float thumbR = rOff + (rOn - rOff) * progress;
+
+            float centerX = r + (w - 2f * r) * progress;
+            float centerY = h / 2f;
+
+            thumbPaint.setColor(blendColors(cThumbOff, cThumbOn, progress));
+            canvas.drawCircle(centerX, centerY, thumbR, thumbPaint);
+        }
+
+        @Override
+        protected void onDetachedFromWindow() {
+            super.onDetachedFromWindow();
+            if (animator != null) {
+                animator.cancel();
+            }
+        }
+
+        @Override
+        public void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo info) {
+            super.onInitializeAccessibilityNodeInfo(info);
+            info.setClassName(Switch.class.getName());
+            info.setCheckable(true);
+            info.setChecked(isChecked);
+        }
+    }
+
     private static class ToggleRow extends LinearLayout {
-        private final Switch toggle;
+        private final IgSwitch toggle;
         private final TextView labelView;
 
         ToggleRow(Context context, String label, boolean checked) {
@@ -2258,15 +2486,11 @@ public class DialogUtils {
         ToggleRow(Context context, int iconRes, String accentHex, String label, boolean checked) {
             super(context);
             setOrientation(HORIZONTAL);
-            setPadding(8, 4, 8, 4);
+            setPadding(dp(context, 20), dp(context, 14), dp(context, 20), dp(context, 14));
             setGravity(Gravity.CENTER_VERTICAL);
             setClickable(true);
             setFocusable(true);
-
-            StateListDrawable bg = new StateListDrawable();
-            bg.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable(C_PRESSED));
-            bg.addState(new int[]{}, new ColorDrawable(Color.TRANSPARENT));
-            setBackground(bg);
+            setBackground(rowRipple(context, 0));
 
             if (iconRes != 0) {
                 addView(buildIconChip(context, iconRes, accentHex));
@@ -2274,20 +2498,14 @@ public class DialogUtils {
 
             labelView = new TextView(context);
             labelView.setText(label);
-            labelView.setTextColor(Color.WHITE);
+            labelView.setTextColor(cText(context));
             labelView.setTextSize(16);
-            labelView.setPadding(0, 20, 16, 20);
+            labelView.setPadding(0, dp(context, 4), dp(context, 12), dp(context, 4));
             LayoutParams lp = new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f);
             labelView.setLayoutParams(lp);
 
-            toggle = new Switch(context);
-            toggle.setChecked(checked);
-            toggle.setThumbTintList(new ColorStateList(
-                    new int[][]{new int[]{-android.R.attr.state_enabled}, new int[]{android.R.attr.state_checked}, new int[]{}},
-                    new int[]{Color.parseColor("#555555"), Color.parseColor("#448AFF"), Color.parseColor("#FFFFFF")}));
-            toggle.setTrackTintList(new ColorStateList(
-                    new int[][]{new int[]{-android.R.attr.state_enabled}, new int[]{android.R.attr.state_checked}, new int[]{}},
-                    new int[]{Color.parseColor("#777777"), Color.parseColor("#1C4C78"), Color.parseColor("#CFD8DC")}));
+            toggle = new IgSwitch(context);
+            toggle.setChecked(checked, false);
             toggle.setClickable(false);
             toggle.setFocusable(false);
 
@@ -2312,7 +2530,7 @@ public class DialogUtils {
 
         void makeBold() {
             labelView.setTypeface(null, Typeface.BOLD);
-            labelView.setTextSize(17);
+            labelView.setTextSize(16);
         }
     }
 
@@ -2324,21 +2542,15 @@ public class DialogUtils {
         return new ToggleRow(context, iconRes, accentHex, label, defaultState);
     }
 
-    /** The same 36dp rounded, tinted icon chip used by the main menu's nav rows. */
     private static View buildIconChip(Context context, int iconRes, String accentHex) {
         android.widget.ImageView iconView = new android.widget.ImageView(context);
-        int accent = Color.parseColor(accentHex);
-        Drawable icon = loadModuleIcon(iconRes, accent);
+        boolean isDestructive = "#FF453A".equalsIgnoreCase(accentHex) || "#ED4956".equalsIgnoreCase(accentHex);
+        int tint = isDestructive ? C_DANGER : cText(context);
+        Drawable icon = loadModuleIcon(iconRes, tint);
         if (icon != null) iconView.setImageDrawable(icon);
         iconView.setScaleType(android.widget.ImageView.ScaleType.CENTER_INSIDE);
-        int iconPad = dp(context, 8);
-        iconView.setPadding(iconPad, iconPad, iconPad, iconPad);
-        GradientDrawable chipBg = new GradientDrawable();
-        chipBg.setColor((accent & 0x00FFFFFF) | 0x33000000);
-        chipBg.setCornerRadius(12);
-        iconView.setBackground(chipBg);
-        LinearLayout.LayoutParams iconLp = new LinearLayout.LayoutParams(dp(context, 36), dp(context, 36));
-        iconLp.rightMargin = dp(context, 14);
+        LinearLayout.LayoutParams iconLp = new LinearLayout.LayoutParams(dp(context, 24), dp(context, 24));
+        iconLp.rightMargin = dp(context, 20);
         iconView.setLayoutParams(iconLp);
         return iconView;
     }
@@ -2350,7 +2562,7 @@ public class DialogUtils {
     private static LinearLayout createSwitchLayout(Context context) {
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(16, 8, 16, 8);
+        layout.setPadding(0, dp(context, 4), 0, dp(context, 4));
         return layout;
     }
 
@@ -2363,14 +2575,14 @@ public class DialogUtils {
         TextView labelView = new TextView(context);
         labelView.setText(label);
         labelView.setTextSize(17);
-        labelView.setTextColor(Color.WHITE);
+        labelView.setTextColor(cText(context));
         labelView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
         TextView valueView = new TextView(context);
         valueView.setText(value);
         valueView.setTextSize(13);
-        valueView.setTextColor(C_TEXT2);
+        valueView.setTextColor(cText2(context));
         valueView.setMaxLines(1);
         valueView.setEllipsize(android.text.TextUtils.TruncateAt.START);
         valueView.setPadding(16, 0, 0, 0);
@@ -2391,8 +2603,10 @@ public class DialogUtils {
 
     /** Same visual chip as the emoji variant, but with a real vector logo (tinted to match). */
     private static View createActionRow(Context context, int iconRes, String label, String accentHex, View.OnClickListener onClick) {
+        boolean isDestructive = "#FF453A".equalsIgnoreCase(accentHex) || "#ED4956".equalsIgnoreCase(accentHex);
+        int tint = isDestructive ? C_DANGER : cText(context);
         android.widget.ImageView iconView = new android.widget.ImageView(context);
-        Drawable icon = loadModuleIcon(iconRes, Color.parseColor(accentHex));
+        Drawable icon = loadModuleIcon(iconRes, tint);
         if (icon != null) iconView.setImageDrawable(icon);
         return createActionRow(context, iconView, label, accentHex, onClick);
     }
@@ -2421,26 +2635,19 @@ public class DialogUtils {
     }
 
     private static View createActionRow(Context context, View iconView, String label, String accentHex, View.OnClickListener onClick) {
+        boolean isDestructive = "#FF453A".equalsIgnoreCase(accentHex) || "#ED4956".equalsIgnoreCase(accentHex);
+        int itemColor = isDestructive ? C_DANGER : cText(context);
+
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        // Aligned with the menu-row metrics so action rows sit flush inside the same grouped cards.
-        row.setPadding(dp(context, 8), dp(context, 11), dp(context, 10), dp(context, 11));
+        row.setPadding(dp(context, 20), dp(context, 16), dp(context, 20), dp(context, 16));
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setClickable(true);
         row.setFocusable(true);
-        row.setBackground(rowRipple(context, 16));
+        row.setBackground(rowRipple(context, 0));
 
-        GradientDrawable iconBg = new GradientDrawable();
-        // Color.parseColor's 8-digit form is #AARRGGBB (alpha FIRST) — appending alpha as a
-        // suffix would misparse it as an opaque color instead of a translucent tint.
-        int accentColor = Color.parseColor(accentHex);
-        iconBg.setColor((accentColor & 0x00FFFFFF) | 0x33000000); // 20% opacity tint
-        iconBg.setCornerRadius(12);
-        iconView.setBackground(iconBg);
-        int ip = dp(context, 8);
-        iconView.setPadding(ip, ip, ip, ip);
-        LinearLayout.LayoutParams iconLp = new LinearLayout.LayoutParams(dp(context, 36), dp(context, 36));
-        iconLp.rightMargin = dp(context, 14);
+        LinearLayout.LayoutParams iconLp = new LinearLayout.LayoutParams(dp(context, 24), dp(context, 24));
+        iconLp.rightMargin = dp(context, 20);
         iconView.setLayoutParams(iconLp);
         if (iconView instanceof android.widget.ImageView) {
             ((android.widget.ImageView) iconView).setScaleType(android.widget.ImageView.ScaleType.CENTER_INSIDE);
@@ -2449,7 +2656,7 @@ public class DialogUtils {
         TextView labelView = new TextView(context);
         labelView.setText(label);
         labelView.setTextSize(16);
-        labelView.setTextColor(Color.parseColor(accentHex));
+        labelView.setTextColor(itemColor);
         labelView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
         row.addView(iconView);
@@ -2462,15 +2669,15 @@ public class DialogUtils {
         LinearLayout wrapper = new LinearLayout(context);
         wrapper.setOrientation(LinearLayout.VERTICAL);
         wrapper.setGravity(Gravity.CENTER_HORIZONTAL);
-        wrapper.setPadding(0, 14, 0, 8);
+        wrapper.setPadding(0, dp(context, 12), 0, dp(context, 10));
 
         View handle = new View(context);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(120, 6);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(context, 32), Math.round(dp(context, 2.5f)));
         lp.gravity = Gravity.CENTER_HORIZONTAL;
         handle.setLayoutParams(lp);
         GradientDrawable handleBg = new GradientDrawable();
-        handleBg.setColor(C_HANDLE);
-        handleBg.setCornerRadius(3);
+        handleBg.setColor(cHandle(context));
+        handleBg.setCornerRadius(dp(context, 1.5f));
         handle.setBackground(handleBg);
 
         wrapper.addView(handle);
@@ -2509,16 +2716,275 @@ public class DialogUtils {
         return scrollView;
     }
 
-    private static AlertDialog createBottomSheetDialog(Context context, View contentView) {
-        AlertDialog dialog = new AlertDialog.Builder(context).setView(contentView).setCancelable(true).create();
+    private static boolean isTouchInsideView(View view, MotionEvent ev) {
+        if (view == null || view.getVisibility() != View.VISIBLE) return false;
+        int[] loc = new int[2];
+        view.getLocationOnScreen(loc);
+        float x = ev.getRawX();
+        float y = ev.getRawY();
+        return x >= loc[0] && x <= (loc[0] + view.getWidth()) &&
+               y >= loc[1] && y <= (loc[1] + view.getHeight());
+    }
+
+    private static ScrollView findScrollView(View view) {
+        if (view instanceof ScrollView) return (ScrollView) view;
+        if (view instanceof ViewGroup) {
+            ViewGroup vg = (ViewGroup) view;
+            for (int i = 0; i < vg.getChildCount(); i++) {
+                ScrollView sv = findScrollView(vg.getChildAt(i));
+                if (sv != null) return sv;
+            }
+        }
+        return null;
+    }
+
+    private static void animateClose(View contentView, Dialog dialog, boolean[] isClosing) {
+        if (isClosing[0]) return;
+        isClosing[0] = true;
+        int h = contentView.getHeight();
+        if (h <= 0) h = dp(contentView.getContext(), 400);
+        contentView.animate()
+                .translationY(h)
+                .setDuration(180)
+                .setInterpolator(new android.view.animation.AccelerateInterpolator(1.8f))
+                .withEndAction(() -> {
+                    try { dialog.dismiss(); } catch (Exception ignored) {}
+                })
+                .start();
+    }
+
+    private static class SheetRootLayout extends FrameLayout {
+        private final View sheetView;
+        private final Dialog dialog;
+        private final boolean[] isClosing;
+        private final int touchSlop;
+        private float downX;
+        private float downY;
+        private boolean isDraggingSheet = false;
+        private VelocityTracker velocityTracker;
+        private ScrollView targetScrollView;
+
+        SheetRootLayout(Context context, View sheetView, Dialog dialog, boolean[] isClosing) {
+            super(context);
+            this.sheetView = sheetView;
+            this.dialog = dialog;
+            this.isClosing = isClosing;
+            this.touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+        }
+
+        private ScrollView getScrollView() {
+            if (targetScrollView == null) {
+                targetScrollView = findScrollView(sheetView);
+            }
+            return targetScrollView;
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(MotionEvent ev) {
+            if (isClosing[0]) return false;
+            int action = ev.getActionMasked();
+
+            if (action == MotionEvent.ACTION_DOWN) {
+                downX = ev.getRawX();
+                downY = ev.getRawY();
+                isDraggingSheet = false;
+                if (velocityTracker != null) {
+                    velocityTracker.recycle();
+                }
+                velocityTracker = VelocityTracker.obtain();
+                velocityTracker.addMovement(ev);
+                targetScrollView = findScrollView(sheetView);
+                return false;
+            }
+
+            if (action == MotionEvent.ACTION_MOVE) {
+                if (velocityTracker != null) {
+                    velocityTracker.addMovement(ev);
+                }
+                float dy = ev.getRawY() - downY;
+                float dx = ev.getRawX() - downX;
+
+                if (dy > touchSlop && dy > Math.abs(dx)) {
+                    ScrollView sv = getScrollView();
+                    boolean inScrollView = sv != null && isTouchInsideView(sv, ev);
+                    if (!inScrollView || sv.getScrollY() <= 0) {
+                        isDraggingSheet = true;
+                        return true;
+                    }
+                }
+            }
+
+            if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                isDraggingSheet = false;
+            }
+
+            return super.onInterceptTouchEvent(ev);
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent ev) {
+            if (isClosing[0]) return true;
+            int action = ev.getActionMasked();
+
+            if (velocityTracker != null) {
+                velocityTracker.addMovement(ev);
+            }
+
+            if (action == MotionEvent.ACTION_DOWN) {
+                downX = ev.getRawX();
+                downY = ev.getRawY();
+                return true;
+            }
+
+            if (action == MotionEvent.ACTION_MOVE) {
+                if (isDraggingSheet) {
+                    float dy = ev.getRawY() - downY;
+                    sheetView.setTranslationY(Math.max(0f, dy));
+                    return true;
+                } else {
+                    float dy = ev.getRawY() - downY;
+                    float dx = ev.getRawX() - downX;
+                    if (dy > touchSlop && dy > Math.abs(dx)) {
+                        ScrollView sv = getScrollView();
+                        boolean inScrollView = sv != null && isTouchInsideView(sv, ev);
+                        if (!inScrollView || sv.getScrollY() <= 0) {
+                            isDraggingSheet = true;
+                            downY = ev.getRawY();
+                            sheetView.setTranslationY(0f);
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                if (isDraggingSheet) {
+                    isDraggingSheet = false;
+                    float currentTransY = sheetView.getTranslationY();
+                    float vy = 0f;
+                    if (velocityTracker != null) {
+                        velocityTracker.computeCurrentVelocity(1000);
+                        vy = velocityTracker.getYVelocity();
+                        velocityTracker.recycle();
+                        velocityTracker = null;
+                    }
+
+                    int dismissThreshold = dp(getContext(), 80);
+                    if (currentTransY > dismissThreshold || vy > 1200f) {
+                        animateClose(sheetView, dialog, isClosing);
+                    } else {
+                        sheetView.animate()
+                                .translationY(0f)
+                                .setDuration(160)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .start();
+                    }
+                    return true;
+                } else {
+                    if (!isTouchInsideView(sheetView, ev)) {
+                        animateClose(sheetView, dialog, isClosing);
+                        return true;
+                    }
+                }
+            }
+
+            return super.onTouchEvent(ev);
+        }
+    }
+
+    private static Dialog createBottomSheetDialog(Context context, View contentView) {
+        Dialog dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
+
+        boolean[] isClosing = new boolean[]{false};
+        SheetRootLayout root = new SheetRootLayout(context, contentView, dialog, isClosing);
+        root.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+
+        dialog.setOnKeyListener((d, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                if (!isClosing[0]) {
+                    animateClose(contentView, dialog, isClosing);
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        FrameLayout.LayoutParams sheetLp = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                Gravity.BOTTOM);
+        contentView.setLayoutParams(sheetLp);
+        contentView.setClickable(true);
+
+        root.addView(contentView);
+        dialog.setContentView(root);
+
         Window window = dialog.getWindow();
         if (window != null) {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             window.setGravity(Gravity.BOTTOM);
-            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            window.getAttributes().windowAnimations = android.R.style.Animation_InputMethod;
+            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            window.setDimAmount(0.70f);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                window.setNavigationBarColor(Color.TRANSPARENT);
+            }
+            View decor = window.getDecorView();
+            if (decor != null) {
+                decor.setPadding(0, 0, 0, 0);
+            }
         }
         return dialog;
+    }
+
+    private static void showBottomSheetDialog(Dialog dialog, View sheetView) {
+        if (dialog == null) return;
+        dialog.show();
+
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            View decor = window.getDecorView();
+            if (decor != null) {
+                decor.setPadding(0, 0, 0, 0);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    int flags = decor.getSystemUiVisibility();
+                    if (!isDarkTheme(sheetView != null ? sheetView.getContext() : decor.getContext())) {
+                        flags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+                    } else {
+                        flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+                    }
+                    decor.setSystemUiVisibility(flags);
+                }
+            }
+            WindowManager.LayoutParams lp = window.getAttributes();
+            if (lp != null) {
+                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+                lp.horizontalMargin = 0f;
+                lp.verticalMargin = 0f;
+                window.setAttributes(lp);
+            }
+        }
+
+        if (sheetView != null) {
+            sheetView.setTranslationY(dp(sheetView.getContext(), 600));
+            sheetView.post(() -> {
+                int h = sheetView.getHeight();
+                if (h <= 0) h = dp(sheetView.getContext(), 400);
+                sheetView.setTranslationY(h);
+                sheetView.animate()
+                        .translationY(0)
+                        .setDuration(260)
+                        .setInterpolator(new android.view.animation.DecelerateInterpolator(1.8f))
+                        .start();
+            });
+        }
     }
 
 
@@ -2527,16 +2993,10 @@ public class DialogUtils {
 
         LinearLayout container = new LinearLayout(context);
         container.setOrientation(LinearLayout.VERTICAL);
-        container.setPadding(6, 2, 6, 2);
-
-        // Faint accent tint so the master control reads as distinct from the toggle card below it.
-        GradientDrawable background = new GradientDrawable();
-        background.setColor((C_ACCENT & 0x00FFFFFF) | 0x24000000);
-        background.setCornerRadius(R_CARD);
-        background.setStroke(1, (C_ACCENT & 0x00FFFFFF) | 0x40000000);
-        container.setBackground(background);
+        container.setPadding(0, dp(context, 2), 0, dp(context, 2));
 
         container.addView(enableAllRow);
+        container.addView(createHairline(context));
         return container;
     }
 

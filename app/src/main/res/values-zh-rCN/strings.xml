@@ -133,7 +133,7 @@
     <!-- ================================================================ -->
 
     <!-- Common -->
-    <string name="ig_dialog_title" translatable="false">InstaEclipse 🌘</string>
+    <string name="ig_dialog_title" translatable="false">InstaEclipse</string>
     <string name="ig_dialog_close">关闭</string>
     <string name="ig_dialog_enable_disable_all">启用/禁用所有</string>
     <string name="ig_dialog_error">错误</string>
