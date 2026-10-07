@@ -1,8 +1,6 @@
 package ps.reso.instaeclipse.ui.component.navigation
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -35,14 +33,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import ps.reso.instaeclipse.R
+import ps.reso.instaeclipse.ui.component.common.AppWordmark
 import ps.reso.instaeclipse.ui.viewmodel.AppNavDestination
 import ps.reso.instaeclipse.ui.viewmodel.SettingsSubpage
 
@@ -154,13 +151,7 @@ fun AppTopBar(
             CenterAlignedTopAppBar(
                 modifier = modifier,
                 title = {
-                    Image(
-                        painter = painterResource(id = R.drawable.instaeclipse_wordmark),
-                        contentDescription = stringResource(R.string.app_name),
-                        modifier = Modifier.height(32.dp),
-                        contentScale = ContentScale.Fit,
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
-                    )
+                    AppWordmark()
                 },
                 navigationIcon = {},
                 actions = {

@@ -48,6 +48,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ps.reso.instaeclipse.BuildConfig
 import ps.reso.instaeclipse.R
+import ps.reso.instaeclipse.ui.component.common.AppWordmark
 import ps.reso.instaeclipse.ui.theme.AppSpacing
 import ps.reso.instaeclipse.utils.ui.AvatarLoader
 
@@ -140,13 +141,7 @@ fun AboutSettingsPage() {
                 modifier = Modifier.size(64.dp)
             )
 
-            Image(
-                painter = painterResource(id = R.drawable.instaeclipse_wordmark),
-                contentDescription = stringResource(R.string.app_name),
-                modifier = Modifier.height(32.dp),
-                contentScale = ContentScale.Fit,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
-            )
+            AppWordmark()
 
             Surface(
                 shape = CircleShape,
