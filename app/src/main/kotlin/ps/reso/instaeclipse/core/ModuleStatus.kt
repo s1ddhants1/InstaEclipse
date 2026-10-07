@@ -12,13 +12,32 @@ object ModuleStatus {
     private val _frameworkName = mutableStateOf<String?>(null)
     val frameworkName: State<String?> = _frameworkName
 
+    private var xposedService: io.github.libxposed.service.XposedService? = null
+
     @JvmStatic
     fun isModuleActiveInternal(): Boolean = false
 
     @JvmStatic
     fun getFrameworkInternal(): String? = null
 
+    fun onServiceConnected(service: io.github.libxposed.service.XposedService) {
+        xposedService = service
+        _isModuleActive.value = true
+        _frameworkName.value = service.frameworkName
+    }
+
+    fun onServiceDisconnected() {
+        xposedService = null
+        checkStatus()
+    }
+
     fun checkStatus() {
+        val service = xposedService
+        if (service != null) {
+            _isModuleActive.value = true
+            _frameworkName.value = service.frameworkName
+            return
+        }
         val active = isModuleActiveInternal()
         _isModuleActive.value = active
         if (active) {

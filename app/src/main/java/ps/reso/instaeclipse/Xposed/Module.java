@@ -8,6 +8,9 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.content.pm.ApplicationInfo;
+
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import org.luckypray.dexkit.DexKitBridge;
@@ -15,8 +18,8 @@ import org.luckypray.dexkit.DexKitBridge;
 import java.util.List;
 import java.util.Map;
 
-import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.IXposedHookZygoteInit;
+import io.github.libxposed.api.XposedModule;
+import io.github.libxposed.api.XposedModuleInterface.PackageReadyParam;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
@@ -69,7 +72,8 @@ import ps.reso.instaeclipse.utils.log.ModuleLog;
 
 
 @SuppressLint("UnsafeDynamicallyLoadedCode")
-public class Module implements IXposedHookLoadPackage, IXposedHookZygoteInit {
+public class Module extends XposedModule {
+    public static volatile Module INSTANCE;
     // List of supported Instagram package names (maintained in CommonUtils)
     private static final List<String> SUPPORTED_PACKAGES = CommonUtils.SUPPORTED_PACKAGES;
     public static DexKitBridge dexKitBridge;
@@ -77,84 +81,55 @@ public class Module implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     public static String moduleSourceDir;
     private static String moduleLibDir;
 
-    // for dev usage
-    /*
-    public static void showToast(final String text) {
-        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(AndroidAppHelper.currentApplication().getApplicationContext(), text, Toast.LENGTH_LONG).show());
-    }
-    */
-
     @Override
-    public void initZygote(StartupParam startupParam) {
-        moduleSourceDir = startupParam.modulePath;
+    public void onPackageReady(@NonNull PackageReadyParam param) {
+        if (!param.isFirstPackage()) return;
 
-        String abi = Build.SUPPORTED_ABIS[0];
-        String abiFolder;
-        if (abi.equalsIgnoreCase("arm64-v8a")) abiFolder = "arm64";
-        else if (abi.equalsIgnoreCase("armeabi-v7a") || abi.equalsIgnoreCase("armeabi") || abi.equalsIgnoreCase("armv8i"))
-            abiFolder = "arm";
-        else if (abi.equalsIgnoreCase("x86")) abiFolder = "x86";
-        else if (abi.equalsIgnoreCase("x86_64")) abiFolder = "x86_64";
-        else abiFolder = abi;
+        final String packageName = param.getPackageName();
+        if (!SUPPORTED_PACKAGES.contains(packageName)) return;
 
-        moduleLibDir = moduleSourceDir.substring(0, moduleSourceDir.lastIndexOf("/")) + "/lib/" + abiFolder;
-    }
+        INSTANCE = this;
+        hostClassLoader = param.getClassLoader();
 
-    @Override
-    public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) {
-        if (CommonUtils.MY_PACKAGE_NAME.equals(lpparam.packageName)) {
-            try {
-                XposedHelpers.findAndHookMethod(
-                    "ps.reso.instaeclipse.core.ModuleStatus",
-                    lpparam.classLoader,
-                    "isModuleActiveInternal",
-                    de.robv.android.xposed.XC_MethodReplacement.returnConstant(true)
-                );
-            } catch (Throwable ignored) {}
-
-            try {
-                String framework = detectFrameworkName();
-                XposedHelpers.findAndHookMethod(
-                    "ps.reso.instaeclipse.core.ModuleStatus",
-                    lpparam.classLoader,
-                    "getFrameworkInternal",
-                    de.robv.android.xposed.XC_MethodReplacement.returnConstant(framework)
-                );
-            } catch (Throwable ignored) {}
-            return;
-        }
-
-        // Hook into Instagram and its clones
-        if (SUPPORTED_PACKAGES.contains(lpparam.packageName)) {
-            if (lpparam.processName != null && !lpparam.processName.equals(lpparam.packageName)) {
-                return;
+        try {
+            ApplicationInfo modAppInfo = getModuleApplicationInfo();
+            if (modAppInfo != null) {
+                moduleSourceDir = modAppInfo.sourceDir;
+                moduleLibDir = modAppInfo.nativeLibraryDir;
             }
+        } catch (Throwable ignored) {}
 
-            try {
-                if (dexKitBridge == null) {
-                    try {
-                        boolean loaded = NativeLibLoader.loadDexKit(
-                                null, moduleSourceDir, moduleLibDir,
-                                (lpparam.appInfo != null) ? lpparam.appInfo.nativeLibraryDir : null);
-                        if (loaded) {
-                            dexKitBridge = DexKitBridge.create(lpparam.appInfo.sourceDir);
-                        } else {
-                            ModuleLog.line("(InstaEclipse): libdexkit.so could not be resolved, continuing without DexKit.");
-                        }
-                    } catch (Throwable t) {
-                        ModuleLog.line("(InstaEclipse): DexKit init failed for " + lpparam.packageName + ": " + t.getMessage());
+        ApplicationInfo targetAppInfo = param.getApplicationInfo();
+
+        try {
+            if (dexKitBridge == null) {
+                try {
+                    boolean loaded = NativeLibLoader.loadDexKit(
+                            null, moduleSourceDir, moduleLibDir,
+                            (targetAppInfo != null) ? targetAppInfo.nativeLibraryDir : null);
+                    if (loaded && targetAppInfo != null) {
+                        dexKitBridge = DexKitBridge.create(targetAppInfo.sourceDir);
+                    } else {
+                        ModuleLog.line("(InstaEclipse): libdexkit.so could not be resolved, continuing without DexKit.");
                     }
+                } catch (Throwable t) {
+                    ModuleLog.line("(InstaEclipse): DexKit init failed for " + packageName + ": " + t.getMessage());
                 }
-
-                // Use the target app's ClassLoader
-                hostClassLoader = lpparam.classLoader;
-
-                // Call the method to hook the target app
-                hookInstagram(lpparam);
-
-            } catch (Throwable t) {
-                ModuleLog.line("(InstaEclipse): Failed to hook " + lpparam.packageName + ": " + t.getMessage());
             }
+
+            XC_LoadPackage.LoadPackageParam lpparam = new XC_LoadPackage.LoadPackageParam(
+                    packageName,
+                    packageName,
+                    param.getClassLoader(),
+                    targetAppInfo,
+                    param.isFirstPackage()
+            );
+
+            // Call the method to hook the target app
+            hookInstagram(lpparam);
+
+        } catch (Throwable t) {
+            ModuleLog.line("(InstaEclipse): Failed to hook " + packageName + ": " + t.getMessage());
         }
     }
 

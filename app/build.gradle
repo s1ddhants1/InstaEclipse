@@ -40,6 +40,7 @@ android {
             useLegacyPackaging true
         }
         resources {
+            merges += "META-INF/xposed/*"
             excludes += [
                 '/META-INF/{AL2.0,LGPL2.1}',
                 '/META-INF/*.version',
@@ -75,12 +76,13 @@ dependencies {
     implementation libs.documentfile
     implementation libs.coroutines.android
     implementation libs.osmdroid
+    implementation libs.libxposed.service
 
     // Testing dependencies
     testImplementation libs.junit
     testImplementation libs.coroutines.test
     testImplementation libs.json
 
-    // Compile-only dependency
-    compileOnly files('libs/api-82.jar')
+    // Compile-only dependencies
+    compileOnly libs.libxposed.api
 }

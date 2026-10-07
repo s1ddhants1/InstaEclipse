@@ -14,8 +14,12 @@ windowSizeClass = "0.4.1"
 osmdroid = "6.1.20"
 junit = "4.13.2"
 json = "20240303"
+libxposedApi = "102.0.0"
+libxposedService = "102.0.0"
 
 [libraries]
+libxposed-api = { module = "io.github.libxposed:api", version.ref = "libxposedApi" }
+libxposed-service = { module = "io.github.libxposed:service", version.ref = "libxposedService" }
 json = { module = "org.json:json", version.ref = "json" }
 osmdroid = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroid" }
 dexkit = { module = "org.luckypray:dexkit", version.ref = "dexkit" }

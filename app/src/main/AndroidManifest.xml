@@ -4,11 +4,13 @@
 
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:description="@string/module_description"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.InstaEclipse"
@@ -58,22 +60,14 @@
             android:exported="true"
             tools:ignore="ExportedContentProvider" />
 
-        <!-- Xposed Meta-data -->
-        <meta-data
-            android:name="xposedmodule"
-            android:value="true" />
-        <meta-data
-            android:name="xposeddescription"
-            android:value="Enhance your Instagram experience" />
-        <meta-data
-            android:name="xposedminversion"
-            android:value="82" />
-        <meta-data
-            android:name="xposedsharedprefs"
-            android:value="true" />
-        <meta-data
-            android:name="xposedscope"
-            android:resource="@array/target_app" />
+        <!-- Modern LibXposed framework service binder provider -->
+        <provider
+            android:name="io.github.libxposed.service.XposedProvider"
+            android:authorities="${applicationId}.XposedService"
+            android:exported="true"
+            tools:ignore="ExportedContentProvider" />
+
+
     </application>
 
     <!-- Permissions -->

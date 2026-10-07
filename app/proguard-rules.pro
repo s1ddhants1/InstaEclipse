@@ -4,9 +4,13 @@
 # Keep essential attributes for debugging and reflection
 -keepattributes *Annotation*, SourceFile, LineNumberTable, InnerClasses, EnclosingMethod, Signature
 
-# Keep Xposed bridge APIs
--dontwarn de.robv.android.xposed.**
--keep class de.robv.android.xposed.** { *; }
+# Keep LibXposed Module Entry Classes & Service Provider
+-keep public class * extends io.github.libxposed.api.XposedModule {
+    public <init>();
+    public void on*(...);
+}
+-keep class io.github.libxposed.service.XposedProvider { *; }
+-dontwarn io.github.libxposed.api.**
 
 # Keep InstaEclipse module entry point and all classes/members
 # Required for Xposed assets/xposed_init, reflection hooks, and internal IPC
