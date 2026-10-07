@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -17,7 +17,7 @@ import ps.reso.instaeclipse.mods.ui.theme.ThemePresets
 import ps.reso.instaeclipse.mods.ui.theme.ThemeSettingsHelper
 import java.io.File
 
-class ThemeCustomizerActivity : AppCompatActivity() {
+class ThemeCustomizerActivity : ComponentActivity() {
 
     companion object {
         private const val CACHE_NAME = "instaeclipse_cache"

@@ -57,23 +57,15 @@ dependencies {
     implementation libs.compose.animation
     implementation libs.activity.compose
     implementation libs.lifecycle.compose
-    implementation libs.lifecycle.viewmodel.compose
-    implementation libs.adaptive
-    implementation libs.adaptive.layout
-    implementation libs.adaptive.navigation
-    implementation libs.splashscreen
     debugImplementation libs.compose.ui.tooling
 
     // Core Android dependencies
     implementation libs.appcompat
     implementation libs.material
-    implementation libs.constraintlayout
-    implementation libs.gson
     implementation libs.dexkit
     implementation libs.documentfile
     implementation libs.coroutines.android
     implementation libs.osmdroid
-    implementation libs.fileprefs
 
     // Testing dependencies
     testImplementation libs.junit

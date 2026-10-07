@@ -31,6 +31,3 @@
 -dontwarn org.checkerframework.**
 
 
-# keep GSON serialized classes
--keep class * implements com.google.gson.JsonDeserializer { *; }
--keep class * implements com.google.gson.JsonSerializer { *; }

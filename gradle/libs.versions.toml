@@ -4,8 +4,6 @@ kotlin = "2.4.10"
 dexkit = "2.2.0"
 appcompat = "1.8.0"
 material = "1.14.0"
-constraintlayout = "2.2.2"
-gson = "2.14.0"
 documentfile = "1.1.0"
 coroutines = "1.11.0"
 composeBom = "2026.08.00"
@@ -13,11 +11,7 @@ activityCompose = "1.13.0"
 lifecycleCompose = "2.11.0"
 material3 = "1.4.0"
 windowSizeClass = "0.4.1"
-adaptive = "1.3.0"
-navigation3 = "1.3.0"
-splashscreen = "1.2.0"
 osmdroid = "6.1.20"
-fileprefs = "1.0"
 junit = "4.13.2"
 json = "20240303"
 
@@ -25,11 +19,8 @@ json = "20240303"
 json = { module = "org.json:json", version.ref = "json" }
 osmdroid = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroid" }
 dexkit = { module = "org.luckypray:dexkit", version.ref = "dexkit" }
-fileprefs = { module = "com.github.chengxuncc:fileprefs", version.ref = "fileprefs" }
-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 documentfile = { module = "androidx.documentfile:documentfile", version.ref = "documentfile" }
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 
@@ -45,11 +36,6 @@ compose-material-icons-extended = { module = "androidx.compose.material:material
 compose-animation = { module = "androidx.compose.animation:animation" }
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleCompose" }
-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleCompose" }
-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "adaptive" }
-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version.ref = "adaptive" }
-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 junit = { module = "junit:junit", version.ref = "junit" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
