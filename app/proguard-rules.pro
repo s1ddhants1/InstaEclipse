@@ -1,33 +1,42 @@
-# Keep everything — no obfuscation, no shrinking
--dontobfuscate
--dontoptimize
--keepattributes *Annotation*, SourceFile, LineNumberTable
+# R8 & ProGuard Optimization Rules for InstaEclipse
+# ----------------------------------------------------
 
-# Keep ALL classes & members (methods, fields)
--keep class ps.reso.instaeclipse.** { *; }
+# Keep essential attributes for debugging and reflection
+-keepattributes *Annotation*, SourceFile, LineNumberTable, InnerClasses, EnclosingMethod, Signature
 
-# Keep everything related to Xposed API
+# Keep Xposed bridge APIs
+-dontwarn de.robv.android.xposed.**
 -keep class de.robv.android.xposed.** { *; }
 
-# Keep reflection / DexKit-accessed symbols
--keep class * {
-    public protected *;
+# Keep InstaEclipse module entry point and all classes/members
+# Required for Xposed assets/xposed_init, reflection hooks, and internal IPC
+-keep class ps.reso.instaeclipse.** { *; }
+-keepclassmembers class ps.reso.instaeclipse.** { *; }
+
+# Keep native method signatures
+-keepclasseswithmembernames class * {
+    native <methods>;
 }
 
-# Keep any dynamically called methods (like URI matchers)
+# DexKit JNI and runtime reflection
+-keep class org.luckypray.dexkit.** { *; }
+-dontwarn org.luckypray.dexkit.**
+
+# osmdroid map integration
+-keep class org.osmdroid.** { *; }
+-dontwarn org.osmdroid.**
+
+# Keep getters/setters that may be dynamically invoked
 -keepclassmembers class * {
     *** get*();
     void set*(***);
 }
 
-# Avoid warnings from missing Android APIs
+# Suppress harmless warnings from build tools and optional dependencies
 -dontwarn android.support.**
 -dontwarn androidx.**
 -dontwarn com.android.**
 -dontwarn org.lsposed.**
-# Suppress missing javax.lang.model warnings
 -dontwarn javax.lang.model.**
 -dontwarn com.google.errorprone.annotations.**
 -dontwarn org.checkerframework.**
-
-
