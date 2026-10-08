@@ -358,7 +358,7 @@ object HookRegistry {
         Hook(
             id = "showFeatureToasts",
             name = "Show Feature Toasts",
-            description = "Shows a toast checklist of loaded features",
+            description = "Shows an IGDS toast notification of loaded features",
             category = HookCategory.MISC,
             defaultEnabled = false
         ),

@@ -104,11 +104,11 @@ public class PostDownloadContextMenuHook {
                 }
             }
             if (downloadOptionValue == null)
-                ModuleLog.line("(IE|Post) ❌ DOWNLOAD enum value not found");
+                ModuleLog.line("(IE|Post) DOWNLOAD enum value not found");
             if (copyLinkOptionValue == null)
-                ModuleLog.line("(IE|Post) ❌ COPY_LINK enum value not found");
+                ModuleLog.line("(IE|Post) COPY_LINK enum value not found");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Post) ❌ loadMediaOptionEnum: " + t);
+            ModuleLog.line("(IE|Post) loadMediaOptionEnum: " + t);
         }
     }
 
@@ -168,7 +168,7 @@ public class PostDownloadContextMenuHook {
                             .usingStrings("MediaOptionsOverflowMenuCreator")));
 
             if (pass1.isEmpty()) {
-                ModuleLog.line("(IE|Post) ❌ MediaOptionsOverflowMenuCreator class not found");
+                ModuleLog.line("(IE|Post) MediaOptionsOverflowMenuCreator class not found");
                 return;
             }
 
@@ -217,7 +217,7 @@ public class PostDownloadContextMenuHook {
             }
 
             if (addButtonMethod == null) {
-                ModuleLog.line("(IE|Post) ❌ addButtonMethod not found in " + creatorClassName);
+                ModuleLog.line("(IE|Post) addButtonMethod not found in " + creatorClassName);
                 return;
             }
             DexKitCache.saveMethod("PostDownload_addButton", addButtonMethod);
@@ -242,7 +242,7 @@ public class PostDownloadContextMenuHook {
             if (enumNormalValue == null) enumNormalValue = firstVal;
 
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Post) ❌ findCreatorClassAndAddButtonMethod: " + t);
+            ModuleLog.line("(IE|Post) findCreatorClassAndAddButtonMethod: " + t);
         }
     }
 
@@ -251,7 +251,7 @@ public class PostDownloadContextMenuHook {
     private static void installAddButtonHook() {
         if (addButtonMethod == null || enumNormalValue == null
                 || (downloadOptionValue == null && copyLinkOptionValue == null)) {
-            ModuleLog.line("(IE|Post) ❌ Cannot install addButton hook — prerequisites missing");
+            ModuleLog.line("(IE|Post) Cannot install addButton hook — prerequisites missing");
             return;
         }
 
@@ -296,7 +296,7 @@ public class PostDownloadContextMenuHook {
 
         if (downloadOptionValue != null) FeatureStatusTracker.setHooked("PostDownload");
         if (copyLinkOptionValue != null) FeatureStatusTracker.setHooked("CopyMediaLink");
-        ModuleLog.line("(IE|Post) ✅ Post menu inject hook installed");
+        ModuleLog.line("(IE|Post) Post menu inject hook installed");
     }
 
     /** Adds one button (Download / Copy Media Link) to the menu currently being built. */
@@ -311,7 +311,7 @@ public class PostDownloadContextMenuHook {
         try {
             addButtonMethod.invoke(null, callArgs);
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Post) ❌ addButton invoke failed: " + t);
+            ModuleLog.line("(IE|Post) addButton invoke failed: " + t);
         } finally {
             sAddingDownload.set(false);
         }
@@ -380,18 +380,18 @@ public class PostDownloadContextMenuHook {
                     XposedBridge.hookMethod(m, clickHook);
                     hooked.add(m);
                 } catch (Throwable t) {
-                    ModuleLog.line("(IE|Post) ❌ Failed to hook click candidate: " + t);
+                    ModuleLog.line("(IE|Post) Failed to hook click candidate: " + t);
                 }
             }
 
             if (hooked.isEmpty()) {
-                ModuleLog.line("(IE|Post) ❌ No click handler methods could be hooked");
+                ModuleLog.line("(IE|Post) No click handler methods could be hooked");
             } else {
                 DexKitCache.saveMethods("PostDownload_click_v2", hooked);
             }
 
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Post) ❌ installClickHandlerHook: " + t);
+            ModuleLog.line("(IE|Post) installClickHandlerHook: " + t);
         }
     }
 
@@ -424,7 +424,7 @@ public class PostDownloadContextMenuHook {
                     if (addCopyLink) patched.add(copyLinkOptionValue);
                     param.setResult(patched);
                 } catch (Throwable t) {
-                    ModuleLog.line("(IE|Post) ❌ allowlist patch failed: " + t);
+                    ModuleLog.line("(IE|Post) allowlist patch failed: " + t);
                 }
             }
         };
@@ -451,7 +451,7 @@ public class PostDownloadContextMenuHook {
                             .addUsingField(prefix + "GEN_AI_INFO:" + typeDesc)));
 
             if (results.isEmpty()) {
-                ModuleLog.line("(IE|Post) ⚠️ Allowlist method not found (menu may not be filtered on this build)");
+                ModuleLog.line("(IE|Post) Allowlist method not found (menu may not be filtered on this build)");
                 return;
             }
 
@@ -459,11 +459,11 @@ public class PostDownloadContextMenuHook {
             target.setAccessible(true);
             XposedBridge.hookMethod(target, allowlistHook);
             DexKitCache.saveMethod("PostDownload_allowlist", target);
-            ModuleLog.line("(IE|Post) ✅ Allowlist patch hooked: " +
+            ModuleLog.line("(IE|Post) Allowlist patch hooked: " +
                     target.getDeclaringClass().getName() + "." + target.getName());
 
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Post) ❌ installAllowlistPatchHook: " + t);
+            ModuleLog.line("(IE|Post) installAllowlistPatchHook: " + t);
         }
     }
 
@@ -501,14 +501,14 @@ public class PostDownloadContextMenuHook {
 
             Context ctx = findContext(thisObj);
             if (ctx == null) {
-                ModuleLog.line("(IE|Post) ❌ Context not found in click handler");
+                ModuleLog.line("(IE|Post) Context not found in click handler");
                 return;
             }
 
             Object media = findMediaViaMenuCreator(thisObj);
             if (media == null) media = findMedia(thisObj);
             if (media == null) {
-                ModuleLog.line("(IE|Post) ❌ Media not found in click handler");
+                ModuleLog.line("(IE|Post) Media not found in click handler");
                 Toast.makeText(ctx, I18n.t(ctx, R.string.ig_toast_no_media_for_post), Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -516,7 +516,7 @@ public class PostDownloadContextMenuHook {
             if (isCopyLink) triggerCopyLink(ctx, media, thisObj);
             else            triggerDownload(ctx, media, thisObj);
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Post) ❌ onOptionClicked: " + t);
+            ModuleLog.line("(IE|Post) onOptionClicked: " + t);
         }
     }
 

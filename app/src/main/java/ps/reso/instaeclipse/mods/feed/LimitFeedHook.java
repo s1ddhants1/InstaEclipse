@@ -33,17 +33,17 @@ public class LimitFeedHook {
                     Class<?> cls = Class.forName(cached, false, classLoader);
                     if (hookConstructors(cls) > 0) {
                         FeatureStatusTracker.setHooked("LimitFeedToFollowing");
-                        ModuleLog.line("(InstaEclipse | LimitFeed): ✅ Hooked via cache: " + cached);
+                        ModuleLog.line("(InstaEclipse | LimitFeed): Hooked via cache: " + cached);
                         return;
                     }
                 } catch (Throwable t) {
-                    ModuleLog.line("(InstaEclipse | LimitFeed): ⚠️ Cache hook failed: " + t.getMessage());
+                    ModuleLog.line("(InstaEclipse | LimitFeed): Cache hook failed: " + t.getMessage());
                 }
             }
         }
 
         if (bridge == null) {
-            ModuleLog.line("(InstaEclipse | LimitFeed): ❌ DexKitBridge is null");
+            ModuleLog.line("(InstaEclipse | LimitFeed): DexKitBridge is null");
             if (FeatureFlags.limitFollowingFeed) {
                 FeatureStatusTracker.setBroken("LimitFeedToFollowing");
             }
@@ -55,7 +55,7 @@ public class LimitFeedHook {
                     .matcher(ClassMatcher.create().usingStrings("Request{mReason=", ", mInstanceNumber=")));
 
             if (classes == null || classes.isEmpty()) {
-                ModuleLog.line("(InstaEclipse | LimitFeed): ❌ Request class not found.");
+                ModuleLog.line("(InstaEclipse | LimitFeed): Request class not found.");
                 if (FeatureFlags.limitFollowingFeed) {
                     FeatureStatusTracker.setBroken("LimitFeedToFollowing");
                 }
@@ -73,7 +73,7 @@ public class LimitFeedHook {
                         hookedClassName = classData.getName();
                     }
                 } catch (Throwable t) {
-                    ModuleLog.line("(InstaEclipse | LimitFeed): ⚠️ Failed hooking " + classData.getName() + ": " + t.getMessage());
+                    ModuleLog.line("(InstaEclipse | LimitFeed): Failed hooking " + classData.getName() + ": " + t.getMessage());
                 }
             }
 
@@ -82,15 +82,15 @@ public class LimitFeedHook {
                     DexKitCache.saveString(CACHE_KEY_CLASS, hookedClassName);
                 }
                 FeatureStatusTracker.setHooked("LimitFeedToFollowing");
-                ModuleLog.line("(InstaEclipse | LimitFeed): ✅ Hooked " + totalHooked + " constructors");
+                ModuleLog.line("(InstaEclipse | LimitFeed): Hooked " + totalHooked + " constructors");
             } else {
-                ModuleLog.line("(InstaEclipse | LimitFeed): ❌ Failed to hook any constructors");
+                ModuleLog.line("(InstaEclipse | LimitFeed): Failed to hook any constructors");
                 if (FeatureFlags.limitFollowingFeed) {
                     FeatureStatusTracker.setBroken("LimitFeedToFollowing");
                 }
             }
         } catch (Throwable t) {
-            ModuleLog.line("(InstaEclipse | LimitFeed): ❌ Exception: " + t.getMessage());
+            ModuleLog.line("(InstaEclipse | LimitFeed): Exception: " + t.getMessage());
             if (FeatureFlags.limitFollowingFeed) {
                 FeatureStatusTracker.setBroken("LimitFeedToFollowing");
             }
@@ -111,13 +111,13 @@ public class LimitFeedHook {
                         try {
                             patchHeaderMap(instance);
                         } catch (Throwable t) {
-                            ModuleLog.line("(InstaEclipse | LimitFeed): ⚠️ Header patch failed: " + t.getMessage());
+                            ModuleLog.line("(InstaEclipse | LimitFeed): Header patch failed: " + t.getMessage());
                         }
                     }
                 });
                 hooked++;
             } catch (Throwable t) {
-                ModuleLog.line("(InstaEclipse | LimitFeed): ⚠️ ctor hook failed on " + cls.getName() + ": " + t.getMessage());
+                ModuleLog.line("(InstaEclipse | LimitFeed): ctor hook failed on " + cls.getName() + ": " + t.getMessage());
             }
         }
         return hooked;

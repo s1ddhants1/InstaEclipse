@@ -51,10 +51,10 @@ public class UnsentThreadButtonHook {
             try {
                 XposedHelpers.findAndHookMethod(act, classLoader, "onResume", resume);
             } catch (Throwable t) {
-                ModuleLog.line("(IE|UnsentBtn) ⚠️ hook " + act + ": " + t.getMessage());
+                ModuleLog.line("(IE|UnsentBtn) hook " + act + ": " + t.getMessage());
             }
         }
-        ModuleLog.line("(IE|UnsentBtn) ✅ installed");
+        ModuleLog.line("(IE|UnsentBtn) installed");
     }
 
     @SuppressLint("DiscouragedApi")
@@ -125,7 +125,7 @@ public class UnsentThreadButtonHook {
                 }
             });
         } catch (Throwable t) {
-            ModuleLog.line("(IE|UnsentBtn) ⚠️ register: " + t.getMessage());
+            ModuleLog.line("(IE|UnsentBtn) register: " + t.getMessage());
         }
     }
 
@@ -195,10 +195,10 @@ public class UnsentThreadButtonHook {
             });
             try { target.addView(btn, Math.min(insertAt, target.getChildCount())); }
             catch (Throwable t) { target.addView(btn); }
-            ModuleLog.line("(IE|UnsentBtn) ✅ injected next to back in " + target.getClass().getSimpleName());
+            ModuleLog.line("(IE|UnsentBtn) injected next to back in " + target.getClass().getSimpleName());
             return true;
         } catch (Throwable t) {
-            ModuleLog.line("(IE|UnsentBtn) ⚠️ inject: " + t.getMessage());
+            ModuleLog.line("(IE|UnsentBtn) inject: " + t.getMessage());
             return false;
         }
     }

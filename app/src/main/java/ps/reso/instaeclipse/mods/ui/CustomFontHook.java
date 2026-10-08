@@ -156,7 +156,7 @@ public class CustomFontHook {
         } catch (Throwable ignored) {}
 
         if (FeatureFlags.customFontEnabled) FeatureStatusTracker.setHooked("CustomFont");
-        ModuleLog.line("(IE|Font) ✅ installed");
+        ModuleLog.line("(IE|Font) installed");
     }
 
     private static Typeface getUserFont() {
@@ -311,9 +311,9 @@ public class CustomFontHook {
                 }
             });
             if (FeatureFlags.customEmojiEnabled) FeatureStatusTracker.setHooked("CustomEmoji");
-            ModuleLog.line("(IE|Emoji) ✅ hook installed");
+            ModuleLog.line("(IE|Emoji) hook installed");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Emoji) ⚠️ install: " + t.getMessage());
+            ModuleLog.line("(IE|Emoji) install: " + t.getMessage());
         }
     }
 

@@ -95,7 +95,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 val combined = buildString {
                     append("=== Instagram Module Logs [$source] ===\n")
                     if (!error.isNullOrEmpty()) {
-                        append("⚠️ $error\n")
+                        append("Error: $error\n")
                     } else if (logText.isBlank()) {
                         append("(No logs recorded in Instagram process yet)\n")
                     } else {

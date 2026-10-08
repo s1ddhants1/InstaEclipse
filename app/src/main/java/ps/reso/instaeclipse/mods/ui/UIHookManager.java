@@ -165,7 +165,7 @@ public class UIHookManager {
 
             // Fallback: If "onCreate" is renamed/obfuscated but still takes a Bundle
             if (methods.isEmpty()) {
-                ModuleLog.line("(InstaEclipse): ⚠️ Specific onCreate not found, searching by signature...");
+                ModuleLog.line("(InstaEclipse): Specific onCreate not found, searching by signature...");
                 methods = Module.dexKitBridge.findMethod(create()
                         .matcher(org.luckypray.dexkit.query.matchers.MethodMatcher.create()
                                 .declaredClass(INSTAGRAM_MAIN_ACTIVITY)
@@ -178,7 +178,7 @@ public class UIHookManager {
             if (!methods.isEmpty()) {
                 String methodName = methods.get(0).getName();
                 if (methodName == null || methodName.isEmpty()) {
-                    ModuleLog.line("(InstaEclipse): ❌ Invalid onCreate method name discovered");
+                    ModuleLog.line("(InstaEclipse): Invalid onCreate method name discovered");
                 } else {
                     XposedHelpers.findAndHookMethod(INSTAGRAM_MAIN_ACTIVITY, classLoader, methodName, Bundle.class, new XC_MethodHook() {
                     @Override
@@ -223,10 +223,10 @@ public class UIHookManager {
                     });
                 } // end else (valid methodName)
             } else {
-                ModuleLog.line("(InstaEclipse): ❌ Failed to find any onCreate candidate in InstagramMainActivity");
+                ModuleLog.line("(InstaEclipse): Failed to find any onCreate candidate in InstagramMainActivity");
             }
         } catch (Exception e) {
-            ModuleLog.line("(InstaEclipse): ❌ DexKit discovery failed: " + e.getMessage());
+            ModuleLog.line("(InstaEclipse): DexKit discovery failed: " + e.getMessage());
         }
 
         // Hook onResume - Instagram Main
@@ -272,7 +272,7 @@ public class UIHookManager {
                 break;
             }
         } catch (Throwable t) {
-            ModuleLog.line("(InstaEclipse): ❌ onResume discovery failed: " + t.getMessage());
+            ModuleLog.line("(InstaEclipse): onResume discovery failed: " + t.getMessage());
         }
 
         // Hook getBottomSheetNavigator - Instagram Main
@@ -375,11 +375,11 @@ public class UIHookManager {
                         ps.reso.instaeclipse.utils.feature.FeatureManager.refreshFeatureStatus();
                         Handler mainHandler = new Handler(Looper.getMainLooper());
                         mainHandler.post(() -> Toast.makeText(ctx.getApplicationContext(),
-                                "✅ " + I18n.t(ctx, R.string.ig_toast_settings_restored), Toast.LENGTH_SHORT).show());
+                                I18n.t(ctx, R.string.ig_toast_settings_restored), Toast.LENGTH_SHORT).show());
                     } catch (Exception e) {
                         Handler mainHandler = new Handler(Looper.getMainLooper());
                         mainHandler.post(() -> Toast.makeText(ctx.getApplicationContext(),
-                                "❌ " + I18n.t(ctx, R.string.ig_toast_restore_failed, e.getMessage()), Toast.LENGTH_LONG).show());
+                                I18n.t(ctx, R.string.ig_toast_restore_failed, e.getMessage()), Toast.LENGTH_LONG).show());
                     }
                 }).start();
             }
@@ -396,7 +396,7 @@ public class UIHookManager {
                         androidx.core.content.ContextCompat.RECEIVER_EXPORTED);
             }
             } catch (Throwable e) {
-            ModuleLog.line("(InstaEclipse | RestoreReceiver): ❌ " + e.getMessage());
+            ModuleLog.line("(InstaEclipse | RestoreReceiver): " + e.getMessage());
         }
     }
 

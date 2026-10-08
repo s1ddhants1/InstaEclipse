@@ -122,7 +122,7 @@ public class CaptionCopyContextMenuHook {
         try {
             installReelLabelOverrideHook(bridge, classLoader);
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Caption) ❌ installReelLabelOverrideHook: " + t);
+            ModuleLog.line("(IE|Caption) installReelLabelOverrideHook: " + t);
         }
     }
 
@@ -156,9 +156,9 @@ public class CaptionCopyContextMenuHook {
                 if (copyCaptionOptionValue != null) break;
             }
             if (copyCaptionOptionValue == null)
-                ModuleLog.line("(IE|Caption) ❌ No usable carrier MediaOption$Option found");
+                ModuleLog.line("(IE|Caption) No usable carrier MediaOption$Option found");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Caption) ❌ loadMediaOptionEnum: " + t);
+            ModuleLog.line("(IE|Caption) loadMediaOptionEnum: " + t);
         }
     }
 
@@ -205,14 +205,14 @@ public class CaptionCopyContextMenuHook {
                         m.setAccessible(true);
                         captionGetter = m;
                         DexKitCache.saveMethod("CaptionGetter", m);
-                        ModuleLog.line("(IE|Caption) ✅ captionGetter=" + declClass + "." + m.getName());
+                        ModuleLog.line("(IE|Caption) captionGetter=" + declClass + "." + m.getName());
                         return;
                     } catch (Throwable ignored) {}
                 }
             }
-            ModuleLog.line("(IE|Caption) ❌ captionGetter not found");
+            ModuleLog.line("(IE|Caption) captionGetter not found");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Caption) ❌ resolveCaptionGetter: " + t);
+            ModuleLog.line("(IE|Caption) resolveCaptionGetter: " + t);
         }
     }
 
@@ -266,7 +266,7 @@ public class CaptionCopyContextMenuHook {
             }
             return bestVal;
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Caption) ❌ extractCaptionText: " + t);
+            ModuleLog.line("(IE|Caption) extractCaptionText: " + t);
             return null;
         }
     }
@@ -314,7 +314,7 @@ public class CaptionCopyContextMenuHook {
                             .usingStrings("MediaOptionsOverflowMenuCreator")));
 
             if (pass1.isEmpty()) {
-                ModuleLog.line("(IE|Caption) ❌ MediaOptionsOverflowMenuCreator class not found");
+                ModuleLog.line("(IE|Caption) MediaOptionsOverflowMenuCreator class not found");
                 return;
             }
 
@@ -363,7 +363,7 @@ public class CaptionCopyContextMenuHook {
             }
 
             if (addButtonMethod == null) {
-                ModuleLog.line("(IE|Caption) ❌ addButtonMethod not found in " + creatorClassName);
+                ModuleLog.line("(IE|Caption) addButtonMethod not found in " + creatorClassName);
                 return;
             }
             DexKitCache.saveMethod("CaptionCopy_addButton", addButtonMethod);
@@ -373,7 +373,7 @@ public class CaptionCopyContextMenuHook {
             resolveEnumNormalValue(addButtonMethod);
 
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Caption) ❌ findCreatorClassAndAddButtonMethod: " + t);
+            ModuleLog.line("(IE|Caption) findCreatorClassAndAddButtonMethod: " + t);
         }
     }
 
@@ -409,7 +409,7 @@ public class CaptionCopyContextMenuHook {
 
     private static void installAddButtonHook() {
         if (addButtonMethod == null || copyCaptionOptionValue == null || enumNormalValue == null) {
-            ModuleLog.line("(IE|Caption) ❌ Cannot install addButton hook — prerequisites missing");
+            ModuleLog.line("(IE|Caption) Cannot install addButton hook — prerequisites missing");
             return;
         }
 
@@ -455,7 +455,7 @@ public class CaptionCopyContextMenuHook {
                 try {
                     addButtonMethod.invoke(null, callArgs);
                 } catch (Throwable t) {
-                    ModuleLog.line("(IE|Caption) ❌ addButton invoke failed: " + t);
+                    ModuleLog.line("(IE|Caption) addButton invoke failed: " + t);
                 } finally {
                     sAddingCaptionRow.set(false);
                 }
@@ -463,7 +463,7 @@ public class CaptionCopyContextMenuHook {
         });
 
         FeatureStatusTracker.setHooked("CaptionCopy");
-        ModuleLog.line("(IE|Caption) ✅ Caption copy menu hook installed");
+        ModuleLog.line("(IE|Caption) Caption copy menu hook installed");
     }
 
     // ── Hook B: click handler ─────────────────────────────────────────────────
@@ -512,18 +512,18 @@ public class CaptionCopyContextMenuHook {
                     XposedBridge.hookMethod(m, clickHook);
                     hooked.add(m);
                 } catch (Throwable t) {
-                    ModuleLog.line("(IE|Caption) ❌ Failed to hook click candidate: " + t);
+                    ModuleLog.line("(IE|Caption) Failed to hook click candidate: " + t);
                 }
             }
 
             if (hooked.isEmpty()) {
-                ModuleLog.line("(IE|Caption) ❌ No click handler methods could be hooked");
+                ModuleLog.line("(IE|Caption) No click handler methods could be hooked");
             } else {
                 DexKitCache.saveMethods("CaptionCopy_click", hooked);
             }
 
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Caption) ❌ installClickHandlerHook: " + t);
+            ModuleLog.line("(IE|Caption) installClickHandlerHook: " + t);
         }
     }
 
@@ -544,7 +544,7 @@ public class CaptionCopyContextMenuHook {
                     patched.add(copyCaptionOptionValue);
                     param.setResult(patched);
                 } catch (Throwable t) {
-                    ModuleLog.line("(IE|Caption) ❌ allowlist patch failed: " + t);
+                    ModuleLog.line("(IE|Caption) allowlist patch failed: " + t);
                 }
             }
         };
@@ -577,7 +577,7 @@ public class CaptionCopyContextMenuHook {
             XposedBridge.hookMethod(target, allowlistHook);
 
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Caption) ❌ installAllowlistPatchHook: " + t);
+            ModuleLog.line("(IE|Caption) installAllowlistPatchHook: " + t);
         }
     }
 
@@ -603,7 +603,7 @@ public class CaptionCopyContextMenuHook {
                         mutable.add(copyCaptionOptionValue);
                     }
                 } catch (Throwable t) {
-                    ModuleLog.line("(IE|Caption) ❌ reel options-list patch failed: " + t);
+                    ModuleLog.line("(IE|Caption) reel options-list patch failed: " + t);
                 }
             }
         };
@@ -632,7 +632,7 @@ public class CaptionCopyContextMenuHook {
             DexKitCache.saveMethod("ReelOptionsListBuilder", target);
 
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Caption) ❌ installReelOptionsListPatch: " + t);
+            ModuleLog.line("(IE|Caption) installReelOptionsListPatch: " + t);
         }
     }
 
@@ -670,7 +670,7 @@ public class CaptionCopyContextMenuHook {
                     try { m.setAccessible(true); XposedBridge.hookMethod(m, labelHook); }
                     catch (Throwable ignored) {}
                 }
-                ModuleLog.line("(IE|Caption) ✅ reel label override (cached), "
+                ModuleLog.line("(IE|Caption) reel label override (cached), "
                         + cached.size() + " builder(s)");
                 return;
             }
@@ -683,7 +683,7 @@ public class CaptionCopyContextMenuHook {
                             .usingEqStrings(List.of(
                                     "Unsupported text row for Clips Viewer Overflow menu."))));
             if (resolverResults.isEmpty()) {
-                ModuleLog.line("(IE|Caption) ❌ reel label resolver not found");
+                ModuleLog.line("(IE|Caption) reel label resolver not found");
                 return;
             }
             Method labelResolver = resolverResults.get(0).getMethodInstance(classLoader);
@@ -725,19 +725,19 @@ public class CaptionCopyContextMenuHook {
                         bm.setAccessible(true);
                         XposedBridge.hookMethod(bm, labelHook);
                         hooked.add(bm);
-                        ModuleLog.line("(IE|Caption) ✅ reel label override on "
+                        ModuleLog.line("(IE|Caption) reel label override on "
                                 + bm.getDeclaringClass().getName() + "." + bm.getName());
                     } catch (Throwable ignored) {}
                 }
             }
 
             if (hooked.isEmpty()) {
-                ModuleLog.line("(IE|Caption) ❌ no reel row-builder methods found");
+                ModuleLog.line("(IE|Caption) no reel row-builder methods found");
             } else {
                 DexKitCache.saveMethods("ReelRowBuilders", hooked);
             }
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Caption) ❌ installReelLabelOverrideHook discovery: " + t);
+            ModuleLog.line("(IE|Caption) installReelLabelOverrideHook discovery: " + t);
         }
     }
 
@@ -808,7 +808,7 @@ public class CaptionCopyContextMenuHook {
 
                     args[titleIdx] = I18n.t(ctx, R.string.ig_caption_copy_menu_item);
                 } catch (Throwable t) {
-                    ModuleLog.line("(IE|Caption) ❌ reel label override (builder): " + t);
+                    ModuleLog.line("(IE|Caption) reel label override (builder): " + t);
                 }
             }
         };
@@ -834,14 +834,14 @@ public class CaptionCopyContextMenuHook {
             Context ctx = findContext(thisObj);
             if (ctx == null) ctx = currentActivity;
             if (ctx == null) {
-                ModuleLog.line("(IE|Caption) ❌ Context not found in click handler");
+                ModuleLog.line("(IE|Caption) Context not found in click handler");
                 return;
             }
 
             Object media = findMediaViaMenuCreator(thisObj);
             if (media == null) media = findMedia(thisObj);
             if (media == null) {
-                ModuleLog.line("(IE|Caption) ❌ Media not found in click handler");
+                ModuleLog.line("(IE|Caption) Media not found in click handler");
                 return;
             }
 
@@ -853,7 +853,7 @@ public class CaptionCopyContextMenuHook {
 
             showCopyPopup(ctx, caption.trim());
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Caption) ❌ onOptionClicked: " + t);
+            ModuleLog.line("(IE|Caption) onOptionClicked: " + t);
         }
     }
 

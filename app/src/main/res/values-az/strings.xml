@@ -22,7 +22,7 @@
     <string name="module_active">Modul aktivdir və işləyir.</string>
 
     <string name="checking_instagram">Instagram Yoxlanılır</string>
-    <string name="installed_instagram_version">Quraşdırılmış Instagram Versiyası: </string>
+    <string name="installed_instagram_version">Quraşdırılmış Instagram Versiyası:</string>
     <string name="not_installed_instagram">Instagram quraşdırılmayıb.</string>
     <string name="error_instagram">Instagram statusu yoxlanarkən xəta baş verdi.</string>
     
@@ -146,7 +146,7 @@
     <string name="ig_dialog_dev_export">Tərtibatçı Konfiqurasiyasını İxrac Et</string>
     <string name="ig_dialog_dev_restore_default_config">Standart Konfiqurasiyaya Qayıt</string>
     <string name="ig_dialog_dev_restore_default_config_confirm">Bu, cari Tərtibatçı Konfiqurasiyasını daxil edilmiş standart ilə əvəz edəcəkdir. Davam etmək istəyirsiniz?</string>
-    <string name="ig_toast_default_config_restored">✅ Standart konfiqurasiya bərpa edildi.</string>
+    <string name="ig_toast_default_config_restored">Standart konfiqurasiya bərpa edildi.</string>
     <string name="ig_dialog_dev_remove_build_expired">Sürüm Vaxtı Keçmiş Bildirişini Sil</string>
     <string name="ig_dialog_unable_open_ui">InstaEclipse interfeysi açıla bilmir.</string>
     <string name="ig_dialog_instagram_not_ready">Instagram açıq deyil və ya hazır deyil.</string>
@@ -156,15 +156,15 @@
     <string name="export_config_success">Konfiqurasiya uğurla ixrac edildi.</string>
     <string name="export_config_failed">Saxlanıla bilmədi: %1$s</string>
     <string name="export_invalid_uri">Yanlış URI</string>
-    <string name="ig_toast_config_imported">✅ Konfiqurasiya idxal edildi.</string>
-    <string name="ig_toast_config_import_failed">❌ Konfiqurasiya idxal edilə bilmədi.</string>
+    <string name="ig_toast_config_imported">Konfiqurasiya idxal edildi.</string>
+    <string name="ig_toast_config_import_failed">Konfiqurasiya idxal edilə bilmədi.</string>
 
     <!-- JsonImportActivity -->
     <string name="json_select_config">JSON Konfiqurasiyasını Seç</string>
-    <string name="json_target_not_specified">❌ Hədəf paket göstərilməyib.</string>
-    <string name="json_sent">✅ Instagram\'a göndərildi.</string>
-    <string name="json_not_valid">❌ Etibarlı JSON faylı deyil.</string>
-    <string name="json_read_failed">❌ Fayl oxuna bilmədi: %1$s</string>
+    <string name="json_target_not_specified">Hədəf paket göstərilməyib.</string>
+    <string name="json_sent">Instagram\'a göndərildi.</string>
+    <string name="json_not_valid">Etibarlı JSON faylı deyil.</string>
+    <string name="json_read_failed">Fayl oxuna bilmədi: %1$s</string>
     <string name="json_cancelled">Ləğv edildi və ya fayl seçilmədi.</string>
     <string name="ig_dialog_ghost_hide_dm_seen">DM Oxundu Bildirişini Gizlət</string>
     <string name="ig_dialog_ghost_hide_typing">Yazma Göstərgesini Gizlət</string>
@@ -214,7 +214,7 @@
     <string name="ig_comment_select_part">Kopyalamaq üçün Hissə Seç</string>
     <string name="ig_comment_select_title">Kopyalamaq üçün Seç</string>
     <string name="ig_comment_copy_selected">Seçilmişi Kopyala</string>
-    <string name="ig_toast_comment_copied">✅ Mübadilə buferinə kopyalandı!</string>
+    <string name="ig_toast_comment_copied">Mübadilə buferinə kopyalandı!</string>
     <string name="ig_dialog_downloader_settings">Yükləyici Ayarları</string>
     <string name="ig_dialog_downloader_posts">Paylaşımları Yüklə</string>
     <string name="ig_dialog_downloader_stories">Hekayələri Yüklə</string>
@@ -229,10 +229,10 @@
     <string name="ig_dialog_backup_failed">Yedəkləmə yaradıla bilmədi: %1$s</string>
     <string name="ig_dialog_about_github">GitHub</string>
     <string name="ig_dialog_about_telegram">Telegram</string>
-    <string name="ig_dialog_restart_message">⚠️ Tətbiqin keşini təmizlə və yenidən başlat?</string>
+    <string name="ig_dialog_restart_message">Tətbiqin keşini təmizlə və yenidən başlat?</string>
     <string name="ig_dialog_clear_cache">Hook Önbelleğini Temizle</string>
     <string name="ig_dialog_section_clear_cache">Hook Önbelleğini Temizle</string>
-    <string name="ig_dialog_clear_cache_message">⚠️ Bu, InstaEclipse-in növbəti işə salınmada Instagram-ı yenidən skan etməsinə məcbur edəcək. Tətbiq yenidən başlayacaq.</string>
+    <string name="ig_dialog_clear_cache_message">Bu, InstaEclipse-in növbəti işə salınmada Instagram-ı yenidən skan etməsinə məcbur edəcək. Tətbiq yenidən başlayacaq.</string>
     <string name="ig_dialog_clear_cache_now">Önbelleği Temizle və Yenidən Başlat</string>
     <string name="ig_dialog_restart_now">İndi Yenidən Başlat</string>
     <string name="ig_dialog_restart_not_found">Yenidən başlatmaq üçün tətbiq tapılmadı.</string>
@@ -242,12 +242,12 @@
     <string name="ig_toast_ghost_no_options">Xəyal rejimi seçimi edilmədi!</string>
     <string name="ig_toast_ghost_enabled">Xəyal rejimi aktivləşdirildi</string>
     <string name="ig_toast_ghost_disabled">Xəyal rejimi deaktivləşdirildi</string>
-    <string name="ig_toast_seen_sent">✅ Oxundu göndərildi</string>
-    <string name="ig_toast_channel_seen_sent">✅ Kanal oxundu göndərildi</string>
+    <string name="ig_toast_seen_sent">Oxundu göndərildi</string>
+    <string name="ig_toast_channel_seen_sent">Kanal oxundu göndərildi</string>
 
     <!-- Toast: Follower status -->
-    <string name="ig_toast_follows_you">sizi izləyir ✅</string>
-    <string name="ig_toast_not_follows_you">sizi izləmir ❌</string>
+    <string name="ig_toast_follows_you">sizi izləyir</string>
+    <string name="ig_toast_not_follows_you">sizi izləmir</string>
 
     <!-- Toast: App settings -->
     <string name="ig_toast_settings_applied">Parametrlər tətbiq edildi!</string>
@@ -313,7 +313,7 @@
     <string name="feat_downloader_reset_folder">Yükləmə Qovluğunu Sıfırla</string>
 
     <!-- multiple versions -->
-    <string name="multiple_versions_detected">⚠️ Birdən çox versiya aşkarlandı</string>
+    <string name="multiple_versions_detected">Birdən çox versiya aşkarlandı</string>
 
     <!-- Story mentions dialog -->
     <string name="ig_mention_dialog_title">Hekayə Qeydləri</string>
@@ -324,7 +324,7 @@
     <!-- Toast: Downloader (service) -->
     <string name="ig_toast_no_download_folder">Yükləmə qovluğu təyin edilməyib</string>
     <string name="ig_toast_file_saved">Saxlanıldı: %1$s</string>
-    <string name="ig_toast_features_loaded">InstaEclipse yükləndi 🎯</string>
+    <string name="ig_toast_features_loaded">InstaEclipse yükləndi</string>
 
     <!-- Update check dialog -->
     <string name="ig_update_title">Yeniləmə mövcuddur</string>
@@ -464,7 +464,7 @@
     <string name="ig_caption_copy_title">Başlığı Kopyala</string>
     <string name="ig_caption_copy_full">Tam Başlığı Kopyala</string>
     <string name="ig_caption_copy_none">Bu paylaşımda başlıq yoxdur</string>
-    <string name="ig_caption_copied">✅ Başlıq mübadilə buferinə kopyalandı!</string>
+    <string name="ig_caption_copied">Başlıq mübadilə buferinə kopyalandı!</string>
     <string name="ig_dialog_downloader_copy_link">Media Linkini Kopyala</string>
     <string name="ig_copy_link_title">Media Linkini Kopyala</string>
     <string name="ig_copy_link_copied">Media linki mübadilə buferinə kopyalandı</string>
@@ -479,8 +479,8 @@
     <string name="ig_instant_save_none">Instant media tapılmadı</string>
     <string name="ig_instant_upload_title">Qalereyadan Instant Yüklə</string>
     <string name="ig_dialog_misc_upload_instants">Qalereyadan Instant Yüklə</string>
-    <string name="ig_instant_upload_chip">🖼 Qalereya</string>
-    <string name="ig_instant_upload_chip_ready">✓ Hazır — deklanşora toxun</string>
+    <string name="ig_instant_upload_chip">Qalereya</string>
+    <string name="ig_instant_upload_chip_ready">Hazır — deklanşora toxun</string>
     <string name="ig_instant_upload_ready">Seçildi! Instant kimi göndərmək üçün deklanşora toxun</string>
     <string name="ig_instant_upload_fail">Həmin şəkli yükləmək mümkün olmadı</string>
     <string name="ig_story_download_choice_title">Hekayəni yüklə</string>

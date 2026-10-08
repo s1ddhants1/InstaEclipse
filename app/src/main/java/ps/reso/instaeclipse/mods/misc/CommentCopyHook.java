@@ -104,7 +104,7 @@ public class CommentCopyHook {
                 }
             });
         } catch (Throwable t) {
-            ModuleLog.line("(InstaEclipse | CopyComment): ⚠️ Activity tracker – " + t);
+            ModuleLog.line("(InstaEclipse | CopyComment): Activity tracker – " + t);
         }
 
         // Cache path — try the new mechanism's cache, then the old mechanism's
@@ -116,7 +116,7 @@ public class CommentCopyHook {
                 resolverMethod = cachedResolver;
                 resolverMethod.setAccessible(true);
                 XposedBridge.hookMethod(cachedFmj, SHOW_MENU_HOOK);
-                ModuleLog.line("(InstaEclipse | CopyComment): ✅ Hooked (cached, new) "
+                ModuleLog.line("(InstaEclipse | CopyComment): Hooked (cached, new) "
                         + cachedFmj.getDeclaringClass().getName() + "." + cachedFmj.getName());
                 FeatureStatusTracker.setHooked("CopyComment");
                 return;
@@ -128,7 +128,7 @@ public class CommentCopyHook {
                 for (java.lang.reflect.Method m : cachedLongPress) {
                     XposedBridge.hookMethod(m, LONG_PRESS_HOOK);
                 }
-                ModuleLog.line("(InstaEclipse | CopyComment): ✅ Hooked (cached, legacy) – "
+                ModuleLog.line("(InstaEclipse | CopyComment): Hooked (cached, legacy) – "
                         + cachedLongPress.size() + " method(s)");
                 FeatureStatusTracker.setHooked("CopyComment");
                 return;
@@ -138,14 +138,14 @@ public class CommentCopyHook {
         try {
             if (findAndHookNew(bridge, classLoader)) return;
         } catch (Throwable t) {
-            ModuleLog.line("(InstaEclipse | CopyComment): ⚠️ new-architecture path failed, "
+            ModuleLog.line("(InstaEclipse | CopyComment): new-architecture path failed, "
                     + "falling back to legacy – " + t);
         }
 
         try {
             findAndHookOld(bridge, classLoader);
         } catch (Throwable t) {
-            ModuleLog.line("(InstaEclipse | CopyComment): ❌ install – " + t.getMessage());
+            ModuleLog.line("(InstaEclipse | CopyComment): install – " + t.getMessage());
         }
     }
 
@@ -169,14 +169,14 @@ public class CommentCopyHook {
             }
 
             if (fmj == null) {
-                ModuleLog.line("(InstaEclipse | CopyComment): ❌ Dcq.FmJ-equivalent not found "
+                ModuleLog.line("(InstaEclipse | CopyComment): Dcq.FmJ-equivalent not found "
                         + "(older Instagram version? falling back to legacy)");
                 return false;
             }
             fmj.setAccessible(true);
 
             if (!resolveRepoField(fmj.getDeclaringClass())) {
-                ModuleLog.line("(InstaEclipse | CopyComment): ❌ repository field not found on "
+                ModuleLog.line("(InstaEclipse | CopyComment): repository field not found on "
                         + fmj.getDeclaringClass().getName());
                 return false;
             }
@@ -200,7 +200,7 @@ public class CommentCopyHook {
             }
 
             if (resolverMethod == null) {
-                ModuleLog.line("(InstaEclipse | CopyComment): ❌ resolver method not found among FmJ's callees");
+                ModuleLog.line("(InstaEclipse | CopyComment): resolver method not found among FmJ's callees");
                 return false;
             }
 
@@ -208,12 +208,12 @@ public class CommentCopyHook {
             DexKitCache.saveMethod(CACHE_KEY, fmj);
             DexKitCache.saveMethod(CACHE_RESOLVER_KEY, resolverMethod);
             FeatureStatusTracker.setHooked("CopyComment");
-            ModuleLog.line("(InstaEclipse | CopyComment): ✅ Hooked " + fmj.getDeclaringClass().getName()
+            ModuleLog.line("(InstaEclipse | CopyComment): Hooked " + fmj.getDeclaringClass().getName()
                     + "." + fmj.getName() + " (resolver=" + resolverMethod.getDeclaringClass().getName()
                     + "." + resolverMethod.getName() + ")");
             return true;
         } catch (Throwable t) {
-            ModuleLog.line("(InstaEclipse | CopyComment): ❌ findAndHookNew – " + t);
+            ModuleLog.line("(InstaEclipse | CopyComment): findAndHookNew – " + t);
             return false;
         }
     }
@@ -256,7 +256,7 @@ public class CommentCopyHook {
         }
 
         if (found.isEmpty()) {
-            ModuleLog.line("(InstaEclipse | CopyComment): ❌ legacy onLongPress not found via DexKit either");
+            ModuleLog.line("(InstaEclipse | CopyComment): legacy onLongPress not found via DexKit either");
             return;
         }
 
@@ -266,10 +266,10 @@ public class CommentCopyHook {
                 java.lang.reflect.Method m = md.getMethodInstance(classLoader);
                 XposedBridge.hookMethod(m, LONG_PRESS_HOOK);
                 hooked.add(m);
-                ModuleLog.line("(InstaEclipse | CopyComment): ✅ Hooked (legacy) "
+                ModuleLog.line("(InstaEclipse | CopyComment): Hooked (legacy) "
                         + md.getClassName() + ".onLongPress");
             } catch (Throwable t) {
-                ModuleLog.line("(InstaEclipse | CopyComment): ❌ legacy hook – " + t.getMessage());
+                ModuleLog.line("(InstaEclipse | CopyComment): legacy hook – " + t.getMessage());
             }
         }
 
@@ -292,7 +292,7 @@ public class CommentCopyHook {
 
                 showCopyPopup(ctx, text.trim());
             } catch (Throwable t) {
-                ModuleLog.line("(InstaEclipse | CopyComment): ❌ legacy hook body – " + t);
+                ModuleLog.line("(InstaEclipse | CopyComment): legacy hook body – " + t);
             }
         }
     };
@@ -370,7 +370,7 @@ public class CommentCopyHook {
                 }
             }
         } catch (Throwable t) {
-            ModuleLog.line("(InstaEclipse | CopyComment): ❌ legacy discover – " + t);
+            ModuleLog.line("(InstaEclipse | CopyComment): legacy discover – " + t);
         }
         return null;
     }
@@ -468,7 +468,7 @@ public class CommentCopyHook {
 
                 showCopyPopup(ctx, text.trim());
             } catch (Throwable t) {
-                ModuleLog.line("(InstaEclipse | CopyComment): ❌ hook body – " + t);
+                ModuleLog.line("(InstaEclipse | CopyComment): hook body – " + t);
             }
         }
     };

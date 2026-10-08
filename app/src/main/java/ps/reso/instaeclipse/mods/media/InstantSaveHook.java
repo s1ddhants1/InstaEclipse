@@ -62,9 +62,9 @@ public class InstantSaveHook {
                     }
                 });
             }
-            ModuleLog.line("(IE|InstantSave) ✅ viewer cache hooked");
+            ModuleLog.line("(IE|InstantSave) viewer cache hooked");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|InstantSave) ⚠️ viewer cache: " + t.getMessage());
+            ModuleLog.line("(IE|InstantSave) viewer cache: " + t.getMessage());
         }
     }
 
@@ -125,9 +125,9 @@ public class InstantSaveHook {
                 });
             }
             FeatureStatusTracker.setHooked("SaveInstants");
-            ModuleLog.line("(IE|InstantSave) ✅ long-press hooked");
+            ModuleLog.line("(IE|InstantSave) long-press hooked");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|InstantSave) ⚠️ long-press: " + t.getMessage());
+            ModuleLog.line("(IE|InstantSave) long-press: " + t.getMessage());
         }
     }
 
@@ -168,7 +168,7 @@ public class InstantSaveHook {
                             Toast.makeText(ctx, I18n.t(ctx, R.string.ig_instant_saved), Toast.LENGTH_SHORT).show());
                 }
             } catch (Throwable e) {
-                ModuleLog.line("(IE|InstantSave) ❌ save failed: " + e);
+                ModuleLog.line("(IE|InstantSave) save failed: " + e);
             }
         });
     }

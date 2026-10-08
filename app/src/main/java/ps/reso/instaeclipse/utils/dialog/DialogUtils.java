@@ -599,7 +599,7 @@ public class DialogUtils {
                 try {
                     instagramActivity.startActivity(importIntent);
                 } catch (Exception e) {
-                    ModuleLog.line("InstaEclipse | ❌ Failed to start JsonImportActivity: " + e.getMessage());
+                    ModuleLog.line("InstaEclipse | Failed to start JsonImportActivity: " + e.getMessage());
                     showSimpleDialog(context, I18n.t(context, R.string.ig_dialog_error), I18n.t(context, R.string.ig_dialog_unable_open_ui));
                 }
             } else {
@@ -782,7 +782,7 @@ public class DialogUtils {
             }
             return null;
         } catch (Throwable t) {
-            ModuleLog.line("(IE|UnsentExport) ❌ " + t.getMessage());
+            ModuleLog.line("(IE|UnsentExport) " + t.getMessage());
             return null;
         }
     }
@@ -1920,7 +1920,7 @@ public class DialogUtils {
         LinearLayout cardView = card(context);
         java.text.SimpleDateFormat fmt = new java.text.SimpleDateFormat("MMM d, HH:mm", java.util.Locale.getDefault());
         for (ps.reso.instaeclipse.utils.media.StoryCache.Entry e : list) {
-            String label = (e.video ? "🎬  " : "🖼  ") + fmt.format(new java.util.Date(e.at))
+            String label = fmt.format(new java.util.Date(e.at))
                     + (e.isExpired() ? "   ·  Expired" : "");
             cardView.addView(createActionRow(context, e.video ? R.drawable.ic_movie : R.drawable.ic_eye,
                     label, "#FF9F0A", v -> openCachedStory(context, e)));

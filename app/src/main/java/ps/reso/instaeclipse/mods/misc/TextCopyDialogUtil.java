@@ -159,7 +159,7 @@ public final class TextCopyDialogUtil {
                 dialog.show();
 
             } catch (Throwable t) {
-                ModuleLog.line("(IE|CopyPopup) ❌ Error: " + t.getMessage());
+                ModuleLog.line("(IE|CopyPopup) Error: " + t.getMessage());
             }
         });
     }
@@ -264,7 +264,7 @@ public final class TextCopyDialogUtil {
                 et.requestFocus();
 
             } catch (Throwable t) {
-                ModuleLog.line("(IE|SelectDialog) ❌ Error: " + t.getMessage());
+                ModuleLog.line("(IE|SelectDialog) Error: " + t.getMessage());
             }
         });
     }
@@ -278,7 +278,7 @@ public final class TextCopyDialogUtil {
                         Toast.makeText(ctx, I18n.t(ctx, toastResId), Toast.LENGTH_SHORT).show());
             }
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Copy) ❌ Clipboard copy failed: " + t.getMessage());
+            ModuleLog.line("(IE|Copy) Clipboard copy failed: " + t.getMessage());
         }
     }
 }

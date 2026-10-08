@@ -140,7 +140,7 @@ public class KeepUnsentMessagesHook {
             }
             ModuleLog.line("(IE|KeepUnsent) current-thread tracker hooked " + n + " method(s)");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|KeepUnsent) ⚠️ current-thread tracker: " + t.getMessage());
+            ModuleLog.line("(IE|KeepUnsent) current-thread tracker: " + t.getMessage());
         }
     }
 
@@ -236,7 +236,7 @@ public class KeepUnsentMessagesHook {
             if (cached != null && !cached.isEmpty()) {
                 for (Method m : cached) XposedBridge.hookMethod(m, hook);
                 FeatureStatusTracker.setHooked("KeepUnsentMessages");
-                ModuleLog.line("(IE|KeepUnsent) ✅ remove hooked (cached) " + cached.size());
+                ModuleLog.line("(IE|KeepUnsent) remove hooked (cached) " + cached.size());
                 return;
             }
         }
@@ -262,16 +262,16 @@ public class KeepUnsentMessagesHook {
                         m.setAccessible(true);
                         XposedBridge.hookMethod(m, hook);
                         hooked.add(m);
-                        ModuleLog.line("(IE|KeepUnsent) ✅ remove hook → " + store.getName() + "." + m.getName() + " (" + p.length + "-arg)");
-                    } catch (Throwable t) { ModuleLog.line("(IE|KeepUnsent) ⚠️ " + t.getMessage()); }
+                        ModuleLog.line("(IE|KeepUnsent) remove hook → " + store.getName() + "." + m.getName() + " (" + p.length + "-arg)");
+                    } catch (Throwable t) { ModuleLog.line("(IE|KeepUnsent) " + t.getMessage()); }
                 }
                 if (!hooked.isEmpty()) break;
             }
-            if (hooked.isEmpty()) { ModuleLog.line("(IE|KeepUnsent) ❌ remove primitive not found"); return; }
+            if (hooked.isEmpty()) { ModuleLog.line("(IE|KeepUnsent) remove primitive not found"); return; }
             DexKitCache.saveMethods(CACHE_KEY, hooked);
             FeatureStatusTracker.setHooked("KeepUnsentMessages");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|KeepUnsent) ❌ remove: " + t);
+            ModuleLog.line("(IE|KeepUnsent) remove: " + t);
         }
     }
 
@@ -335,9 +335,9 @@ public class KeepUnsentMessagesHook {
                             if (!present) { liveList.add(msg); added++; }
                         }
                     }
-                    if (added > 0) ModuleLog.line("(IE|KeepUnsent) ✅ re-injected " + added + " kept msg(s) into this thread");
+                    if (added > 0) ModuleLog.line("(IE|KeepUnsent) re-injected " + added + " kept msg(s) into this thread");
                 } catch (Throwable t) {
-                    ModuleLog.line("(IE|KeepUnsent) ❌ reconcile body: " + t);
+                    ModuleLog.line("(IE|KeepUnsent) reconcile body: " + t);
                 }
             }
         };
@@ -362,13 +362,13 @@ public class KeepUnsentMessagesHook {
                     if (!rest) continue;
                     m.setAccessible(true);
                     XposedBridge.hookMethod(m, hook);
-                    ModuleLog.line("(IE|KeepUnsent) ✅ reconcile hook → " + c.getName() + "." + m.getName());
+                    ModuleLog.line("(IE|KeepUnsent) reconcile hook → " + c.getName() + "." + m.getName());
                     return;
                 }
             }
-            ModuleLog.line("(IE|KeepUnsent) ❌ reconcile method not found");
+            ModuleLog.line("(IE|KeepUnsent) reconcile method not found");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|KeepUnsent) ❌ reconcile resolve: " + t);
+            ModuleLog.line("(IE|KeepUnsent) reconcile resolve: " + t);
         }
     }
 
@@ -411,10 +411,10 @@ public class KeepUnsentMessagesHook {
             // Embed the chat's username (best-effort) so the Unsent viewer can show it per folder.
             String who = ThreadNames.get(threadId);
             ps.reso.instaeclipse.utils.ghost.UnsentLog.add(threadId, who, val); // persistent per-thread log
-            ModuleLog.line("(IE|KeepUnsent) ✅ logged (thread=" + threadId + " who=" + who + "): " + (val.length() > 24 ? val.substring(0, 24) + "…" : val));
+            ModuleLog.line("(IE|KeepUnsent) logged (thread=" + threadId + " who=" + who + "): " + (val.length() > 24 ? val.substring(0, 24) + "…" : val));
         } catch (Throwable t) {
             markedIds.remove(id);
-            ModuleLog.line("(IE|KeepUnsent) ⚠️ log failed: " + t.getMessage());
+            ModuleLog.line("(IE|KeepUnsent) log failed: " + t.getMessage());
         }
     }
 

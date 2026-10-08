@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Launch
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -38,7 +37,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -141,25 +139,12 @@ fun HomeDashboard(
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        if (!uiState.isModuleActive) {
-                            Icon(
-                                imageVector = Icons.Filled.Warning,
-                                contentDescription = null,
-                                tint = Color(0xFFFF9800),
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
-                        Text(
-                            text = if (uiState.isModuleActive) "InstaEclipse Active" else "Module Inactive",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
+                    Text(
+                        text = if (uiState.isModuleActive) "InstaEclipse Active" else "Module Inactive",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                     Text(
                         text = if (uiState.isModuleActive) {
                             val framework = uiState.detectedFramework ?: "LSPosed"
