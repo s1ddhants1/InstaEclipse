@@ -81,7 +81,7 @@ public class StoryMentionHook {
             if (g != null && c != null) {
                 rawMentionsGetter = g;
                 mentionsConverter = c;
-                ModuleLog.line("(IE|Mention) ✅ pipeline resolved from cache");
+                ModuleLog.line("(IE|Mention) pipeline resolved from cache");
                 return;
             }
         }
@@ -120,9 +120,9 @@ public class StoryMentionHook {
                     } catch (Throwable ignored) {}
                 }
             }
-            if (rawMentionsGetter == null) ModuleLog.line("(IE|Mention) ❌ rawMentionsGetter not found");
+            if (rawMentionsGetter == null) ModuleLog.line("(IE|Mention) rawMentionsGetter not found");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Mention) ❌ rawMentionsGetter query failed: " + t);
+            ModuleLog.line("(IE|Mention) rawMentionsGetter query failed: " + t);
         }
 
         try {
@@ -140,13 +140,13 @@ public class StoryMentionHook {
                     break;
                 } catch (Throwable ignored) {}
             }
-            if (mentionsConverter == null) ModuleLog.line("(IE|Mention) ❌ mentionsConverter not found");
+            if (mentionsConverter == null) ModuleLog.line("(IE|Mention) mentionsConverter not found");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Mention) ❌ mentionsConverter query failed: " + t);
+            ModuleLog.line("(IE|Mention) mentionsConverter query failed: " + t);
         }
 
         if (rawMentionsGetter != null && mentionsConverter != null) {
-            ModuleLog.line("(IE|Mention) ✅ pipeline resolved: " + rawMentionsGetter.getName() + " -> " + mentionsConverter.getName());
+            ModuleLog.line("(IE|Mention) pipeline resolved: " + rawMentionsGetter.getName() + " -> " + mentionsConverter.getName());
         }
     }
 
@@ -201,12 +201,12 @@ public class StoryMentionHook {
                     } catch (Throwable ignored) {}
                 }
             } catch (Throwable t) {
-                ModuleLog.line("(IE|Mention) ❌ button hook DexKit: " + t);
+                ModuleLog.line("(IE|Mention) button hook DexKit: " + t);
             }
         }
 
         if (method == null) {
-            ModuleLog.line("(IE|Mention) ❌ button builder not found");
+            ModuleLog.line("(IE|Mention) button builder not found");
             return;
         }
         DexKitCache.saveMethod("MentionButton", method);
@@ -228,9 +228,9 @@ public class StoryMentionHook {
                     param.setResult(extended);
                 }
             });
-            ModuleLog.line("(IE|Mention) ✅ button hook installed");
+            ModuleLog.line("(IE|Mention) button hook installed");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Mention) ❌ button hook: " + t);
+            ModuleLog.line("(IE|Mention) button hook: " + t);
         }
     }
 
@@ -255,13 +255,13 @@ public class StoryMentionHook {
                                         "friendships/mute_friend_reel/%s/",
                                         "[INTERNAL] Pause Playback")));
                 if (methods.isEmpty()) {
-                    ModuleLog.line("(IE|Mention) ❌ click handler not found");
+                    ModuleLog.line("(IE|Mention) click handler not found");
                     return;
                 }
                 method = methods.get(0).getMethodInstance(classLoader);
                 DexKitCache.saveMethod("MentionClick", method);
             } catch (Throwable t) {
-                ModuleLog.line("(IE|Mention) ❌ click hook DexKit: " + t);
+                ModuleLog.line("(IE|Mention) click hook DexKit: " + t);
                 return;
             }
         }
@@ -296,18 +296,18 @@ public class StoryMentionHook {
                             if (ctx == null) ctx = findContext(a);
                         }
 
-                        if (ctx == null) { ModuleLog.line("(IE|Mention) ❌ context not found"); return; }
-                        if (media == null) { ModuleLog.line("(IE|Mention) ❌ Media not found"); return; }
+                        if (ctx == null) { ModuleLog.line("(IE|Mention) context not found"); return; }
+                        if (media == null) { ModuleLog.line("(IE|Mention) Media not found"); return; }
 
                         showMentionsDialog(ctx, resolveMentions(media));
                     } catch (Throwable t) {
-                        ModuleLog.line("(IE|Mention) ❌ click handler: " + t);
+                        ModuleLog.line("(IE|Mention) click handler: " + t);
                     }
                 }
             });
-            ModuleLog.line("(IE|Mention) ✅ click hook installed");
+            ModuleLog.line("(IE|Mention) click hook installed");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Mention) ❌ click hook: " + t);
+            ModuleLog.line("(IE|Mention) click hook: " + t);
         }
     }
 
@@ -318,7 +318,7 @@ public class StoryMentionHook {
         List<String> usernames = new ArrayList<>();
         try {
             if (rawMentionsGetter == null || mentionsConverter == null) {
-                ModuleLog.line("(IE|Mention) ❌ mention pipeline not resolved");
+                ModuleLog.line("(IE|Mention) mention pipeline not resolved");
                 return usernames;
             }
 
@@ -328,7 +328,7 @@ public class StoryMentionHook {
             Class<?> owner = rawMentionsGetter.getDeclaringClass();
             Object receiver = owner.isInstance(media) ? media : findFieldByType(media, owner.getName());
             if (receiver == null) {
-                ModuleLog.line("(IE|Mention) ❌ mention receiver (" + owner.getName() + ") not found on media");
+                ModuleLog.line("(IE|Mention) mention receiver (" + owner.getName() + ") not found on media");
                 return usernames;
             }
 
@@ -525,7 +525,7 @@ public class StoryMentionHook {
                 dialog.show();
 
             } catch (Throwable t) {
-                ModuleLog.line("(IE|Mention) ❌ showMentionsDialog: " + t);
+                ModuleLog.line("(IE|Mention) showMentionsDialog: " + t);
             }
         });
     }

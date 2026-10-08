@@ -11,7 +11,7 @@
     <!-- home -->
     <string name="back">Πίσω</string>
     <string name="apply_changes">Εφαρμογή Αλλαγών</string>
-    <string name="multiple_versions_detected">⚠️ Εντοπίστηκαν πολλαπλές εκδόσεις</string>
+    <string name="multiple_versions_detected">Εντοπίστηκαν πολλαπλές εκδόσεις</string>
     <string name="module_disabled">Το Module δεν είναι ενεργό. Παρακαλούμε ενεργοποιήστε το.</string>
     <string name="module_status">Κατάσταση Module:</string>
     <string name="module_status_disabled">Κατάσταση Module: Ανενεργό</string>
@@ -173,7 +173,7 @@
     <string name="ig_dialog_dev_export">Εξαγωγή Ρυθμίσεων Προγραμματιστή</string>
     <string name="ig_dialog_dev_restore_default_config">Επαναφορά Προεπιλεγμένης Διαμόρφωσης</string>
     <string name="ig_dialog_dev_restore_default_config_confirm">Αυτό θα αντικαταστήσει την τρέχουσα Διαμόρφωση Προγραμματιστή με την ενσωματωμένη προεπιλεγμένη. Συνέχεια;</string>
-    <string name="ig_toast_default_config_restored">✅ Η προεπιλεγμένη διαμόρφωση αποκαταστάθηκε.</string>
+    <string name="ig_toast_default_config_restored">Η προεπιλεγμένη διαμόρφωση αποκαταστάθηκε.</string>
     <string name="ig_dialog_dev_remove_build_expired">Αφαίρεση Αναδυόμενου Παλαιάς Έκδοσης</string>
     <string name="ig_dialog_unable_open_ui">Αδύνατο άνοιγμα διεπαφής InstaEclipse.</string>
     <string name="ig_dialog_instagram_not_ready">Το Instagram δεν είναι ανοιχτό ή έτοιμο.</string>
@@ -183,15 +183,15 @@
     <string name="export_config_success">Οι ρυθμίσεις εξήχθησαν επιτυχώς.</string>
     <string name="export_config_failed">Αποτυχία αποθήκευσης: %1$s</string>
     <string name="export_invalid_uri">Μη έγκυρο URI</string>
-    <string name="ig_toast_config_imported">✅ Οι ρυθμίσεις εισήχθησαν.</string>
-    <string name="ig_toast_config_import_failed">❌ Αποτυχία εισαγωγής ρυθμίσεων.</string>
+    <string name="ig_toast_config_imported">Οι ρυθμίσεις εισήχθησαν.</string>
+    <string name="ig_toast_config_import_failed">Αποτυχία εισαγωγής ρυθμίσεων.</string>
 
     <!-- JsonImportActivity -->
     <string name="json_select_config">Επιλογή αρχείου JSON</string>
-    <string name="json_target_not_specified">❌ Δεν ορίστηκε πακέτο προορισμού.</string>
-    <string name="json_sent">✅ Στάλθηκε στο Instagram.</string>
-    <string name="json_not_valid">❌ Μη έγκυρο αρχείο JSON.</string>
-    <string name="json_read_failed">❌ Αποτυχία ανάγνωσης αρχείου: %1$s</string>
+    <string name="json_target_not_specified">Δεν ορίστηκε πακέτο προορισμού.</string>
+    <string name="json_sent">Στάλθηκε στο Instagram.</string>
+    <string name="json_not_valid">Μη έγκυρο αρχείο JSON.</string>
+    <string name="json_read_failed">Αποτυχία ανάγνωσης αρχείου: %1$s</string>
     <string name="json_cancelled">Ακυρώθηκε ή δεν επιλέχθηκε αρχείο.</string>
 
     <!-- Ghost Mode options -->
@@ -251,7 +251,7 @@
     <string name="ig_comment_select_part">Επιλογή Τμήματος για Αντιγραφή</string>
     <string name="ig_comment_select_title">Επιλογή για Αντιγραφή</string>
     <string name="ig_comment_copy_selected">Αντιγραφή Επιλεγμένου</string>
-    <string name="ig_toast_comment_copied">✅ Αντιγράφηκε στο πρόχειρο!</string>
+    <string name="ig_toast_comment_copied">Αντιγράφηκε στο πρόχειρο!</string>
 
     <!-- Downloader options -->
     <string name="ig_dialog_downloader_settings">Ρυθμίσεις Λήψης</string>
@@ -275,10 +275,10 @@
     <string name="ig_dialog_about_telegram">Telegram</string>
 
     <!-- Restart -->
-    <string name="ig_dialog_restart_message">⚠️ Εκκαθάριση cache εφαρμογής και επανεκκίνηση;</string>
+    <string name="ig_dialog_restart_message">Εκκαθάριση cache εφαρμογής και επανεκκίνηση;</string>
     <string name="ig_dialog_clear_cache">Εκκαθάριση Cache Hooks</string>
     <string name="ig_dialog_section_clear_cache">Εκκαθάριση Cache Hooks</string>
-    <string name="ig_dialog_clear_cache_message">⚠️ Αυτό θα αναγκάσει το InstaEclipse να επανασαρώσει το Instagram κατά την επόμενη εκκίνηση. Η εφαρμογή θα επανεκκινηθεί.</string>
+    <string name="ig_dialog_clear_cache_message">Αυτό θα αναγκάσει το InstaEclipse να επανασαρώσει το Instagram κατά την επόμενη εκκίνηση. Η εφαρμογή θα επανεκκινηθεί.</string>
     <string name="ig_dialog_clear_cache_now">Εκκαθάριση Cache &amp; Επανεκκίνηση</string>
     <string name="ig_dialog_restart_now">Επανεκκίνηση Τώρα</string>
     <string name="ig_dialog_restart_not_found">Αδύνατη εύρεση εφαρμογής για επανεκκίνηση.</string>
@@ -288,12 +288,12 @@
     <string name="ig_toast_ghost_no_options">Δεν επιλέχθηκαν επιλογές Αόρατης Λειτουργίας!</string>
     <string name="ig_toast_ghost_enabled">Αόρατη Λειτουργία Ενεργοποιήθηκε</string>
     <string name="ig_toast_ghost_disabled">Αόρατη Λειτουργία Απενεργοποιήθηκε</string>
-    <string name="ig_toast_seen_sent">✅ Εστάλη Ανάγνωση</string>
-    <string name="ig_toast_channel_seen_sent">✅ Εστάλη Ανάγνωση Καναλιού</string>
+    <string name="ig_toast_seen_sent">Εστάλη Ανάγνωση</string>
+    <string name="ig_toast_channel_seen_sent">Εστάλη Ανάγνωση Καναλιού</string>
 
     <!-- Toast: Follower status -->
-    <string name="ig_toast_follows_you">σε ακολουθεί ✅</string>
-    <string name="ig_toast_not_follows_you">δεν σε ακολουθεί ❌</string>
+    <string name="ig_toast_follows_you">σε ακολουθεί</string>
+    <string name="ig_toast_not_follows_you">δεν σε ακολουθεί</string>
 
     <!-- Toast: App settings -->
     <string name="ig_toast_settings_applied">Οι Ρυθμίσεις Εφαρμόστηκαν!</string>
@@ -355,7 +355,7 @@
     <!-- Toast: Downloader (service) -->
     <string name="ig_toast_no_download_folder">Δεν έχει οριστεί φάκελος λήψεων</string>
     <string name="ig_toast_file_saved">Αποθηκεύτηκε: %1$s</string>
-    <string name="ig_toast_features_loaded">Το InstaEclipse φορτώθηκε 🎯</string>
+    <string name="ig_toast_features_loaded">Το InstaEclipse φορτώθηκε</string>
 
 
     <!-- Update check dialog -->
@@ -494,7 +494,7 @@
     <string name="ig_caption_copy_title">Αντιγραφή Λεζάντας</string>
     <string name="ig_caption_copy_full">Αντιγραφή Πλήρους Λεζάντας</string>
     <string name="ig_caption_copy_none">Δεν υπάρχει λεζάντα σε αυτή τη δημοσίευση</string>
-    <string name="ig_caption_copied">✅ Η λεζάντα αντιγράφηκε στο πρόχειρο!</string>
+    <string name="ig_caption_copied">Η λεζάντα αντιγράφηκε στο πρόχειρο!</string>
     <string name="ig_dialog_downloader_copy_link">Αντιγραφή Συνδέσμου Πολυμέσων</string>
     <string name="ig_copy_link_title">Αντιγραφή Συνδέσμου Πολυμέσων</string>
     <string name="ig_copy_link_copied">Ο σύνδεσμος πολυμέσων αντιγράφηκε στο πρόχειρο</string>
@@ -509,8 +509,8 @@
     <string name="ig_instant_save_none">Δεν βρέθηκαν πολυμέσα Instant</string>
     <string name="ig_instant_upload_title">Μεταφόρτωση Instant από τη Συλλογή</string>
     <string name="ig_dialog_misc_upload_instants">Μεταφόρτωση Instant από τη Συλλογή</string>
-    <string name="ig_instant_upload_chip">🖼 Συλλογή</string>
-    <string name="ig_instant_upload_chip_ready">✓ Έτοιμο — πατήστε το κλείστρο</string>
+    <string name="ig_instant_upload_chip">Συλλογή</string>
+    <string name="ig_instant_upload_chip_ready">Έτοιμο — πατήστε το κλείστρο</string>
     <string name="ig_instant_upload_ready">Επιλέχθηκε! Πατήστε το κλείστρο για αποστολή ως Instant</string>
     <string name="ig_instant_upload_fail">Δεν ήταν δυνατή η φόρτωση αυτής της εικόνας</string>
     <string name="ig_story_download_choice_title">Λήψη ιστορίας</string>

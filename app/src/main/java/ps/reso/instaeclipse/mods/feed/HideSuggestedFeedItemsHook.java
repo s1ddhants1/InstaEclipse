@@ -72,7 +72,7 @@ public class HideSuggestedFeedItemsHook {
                     markHookedForEnabledFlags();
                     return;
                 } catch (Throwable t) {
-                    ModuleLog.line("(InstaEclipse | HideSuggested): ⚠️ Cache hook failed: " + t.getMessage());
+                    ModuleLog.line("(InstaEclipse | HideSuggested): Cache hook failed: " + t.getMessage());
                 }
             }
         }
@@ -103,7 +103,7 @@ public class HideSuggestedFeedItemsHook {
             }
 
             if (methods.isEmpty()) {
-                ModuleLog.line("(InstaEclipse | HideSuggested): ❌ FeedItem parser not found.");
+                ModuleLog.line("(InstaEclipse | HideSuggested): FeedItem parser not found.");
                 return;
             }
 
@@ -111,10 +111,10 @@ public class HideSuggestedFeedItemsHook {
             DexKitCache.saveString(CACHE_KEY_PARSER, targetClass);
             hookBridgeMethod(targetClass, classLoader, filterHook);
             markHookedForEnabledFlags();
-            ModuleLog.line("(InstaEclipse | HideSuggested): ✅ Hooked: " + targetClass);
+            ModuleLog.line("(InstaEclipse | HideSuggested): Hooked: " + targetClass);
 
         } catch (Throwable t) {
-            ModuleLog.line("(InstaEclipse | HideSuggested): ❌ Exception: " + t.getMessage());
+            ModuleLog.line("(InstaEclipse | HideSuggested): Exception: " + t.getMessage());
         }
     }
 
@@ -132,7 +132,7 @@ public class HideSuggestedFeedItemsHook {
     // than waiting for a matching feed item to actually be filtered at runtime. The status
     // toast is built ~1.5s after the main activity's onCreate — whether a suggestion/Threads
     // unit has scrolled into the feed by then is essentially random, so gating the status on
-    // that produced a false ❌ even when the hook was installed and working correctly.
+    // that produced a false even when the hook was installed and working correctly.
     private void markHookedForEnabledFlags() {
         if (FeatureFlags.hideSuggestionsInFeed) FeatureStatusTracker.setHooked("HideSuggestionsInFeed");
         if (FeatureFlags.hideThreadsSuggestions) FeatureStatusTracker.setHooked("HideThreadsSuggestions");

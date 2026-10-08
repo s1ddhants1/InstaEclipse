@@ -16,7 +16,7 @@ public class FeatureStatusTracker {
 
     // Names whose hook has installed. Kept independently of `features` so that a later
     // setEnabled() (e.g. the companion-sync re-runs refreshFeatureStatus after hooks are
-    // already installed) can't wipe the hooked state back to a ❌ in the load toast. Xposed
+    // already installed) can't wipe the hooked state back to a in the load toast. Xposed
     // hooks persist for the process, so once hooked, a feature stays hooked.
     private static final Set<String> hooked = Collections.synchronizedSet(new HashSet<>());
 

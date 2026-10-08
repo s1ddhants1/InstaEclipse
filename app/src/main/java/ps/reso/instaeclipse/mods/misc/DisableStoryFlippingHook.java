@@ -29,14 +29,14 @@ public class DisableStoryFlippingHook {
             Method cached = DexKitCache.loadMethod("StoryFlipping", Module.hostClassLoader);
             if (cached != null) {
                 XposedBridge.hookMethod(cached, HOOK);
-                ModuleLog.line("(InstaEclipse | StoryFlipping): ✅ Hooked (dynamic check): " + cached.getDeclaringClass().getName() + "." + cached.getName());
+                ModuleLog.line("(InstaEclipse | StoryFlipping): Hooked (dynamic check): " + cached.getDeclaringClass().getName() + "." + cached.getName());
                 return;
             }
         }
         try {
             findAndHookMethod(bridge);
         } catch (Exception e) {
-            ModuleLog.line("(InstaEclipse | StoryFlipping): ❌ Error handling Story Flipping hook: " + e.getMessage());
+            ModuleLog.line("(InstaEclipse | StoryFlipping): Error handling Story Flipping hook: " + e.getMessage());
         }
     }
 
@@ -54,7 +54,7 @@ public class DisableStoryFlippingHook {
             );
 
             if (methods.isEmpty()) {
-                ModuleLog.line("(InstaEclipse | StoryFlipping): ❌ No methods found referencing 'end_scene'.");
+                ModuleLog.line("(InstaEclipse | StoryFlipping): No methods found referencing 'end_scene'.");
                 return;
             }
 
@@ -65,16 +65,16 @@ public class DisableStoryFlippingHook {
                     DexKitCache.saveMethod("StoryFlipping", targetMethod);
                     XposedBridge.hookMethod(targetMethod, HOOK);
 
-                    ModuleLog.line("(InstaEclipse | StoryFlipping): ✅ Hooked (dynamic check): " +
+                    ModuleLog.line("(InstaEclipse | StoryFlipping): Hooked (dynamic check): " +
                             method.getClassName() + "." + method.getName());
                     return;
 
                 } catch (Exception e) {
-                    ModuleLog.line("(InstaEclipse | StoryFlipping): ❌ Error hooking method: " + e.getMessage());
+                    ModuleLog.line("(InstaEclipse | StoryFlipping): Error hooking method: " + e.getMessage());
                 }
             }
         } catch (Exception e) {
-            ModuleLog.line("(InstaEclipse | StoryFlipping): ❌ Error during dynamic method discovery: " + e.getMessage());
+            ModuleLog.line("(InstaEclipse | StoryFlipping): Error during dynamic method discovery: " + e.getMessage());
         }
     }
 }

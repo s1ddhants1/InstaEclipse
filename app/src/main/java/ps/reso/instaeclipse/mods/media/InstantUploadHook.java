@@ -73,7 +73,7 @@ public class InstantUploadHook {
                 for (Class<?> t : m.getParameterTypes()) if (t == Bitmap.class) bmp++;
                 if (bmp >= 2) { a02 = m; break; }
             }
-            if (a02 == null) { ModuleLog.line("(IE|InstantUpload) ⚠️ A02 not found"); return; }
+            if (a02 == null) { ModuleLog.line("(IE|InstantUpload) A02 not found"); return; }
             XposedBridge.hookMethod(a02, new XC_MethodHook() {
                 @Override protected void beforeHookedMethod(MethodHookParam p) {
                     try {
@@ -89,17 +89,17 @@ public class InstantUploadHook {
                                 p.args[2] = pendingBitmap.copy(pendingBitmap.getConfig(), false);
                             pendingBitmap = null;
                             FeedVideoDownloadHook.mainHandler.post(InstantUploadHook::removeChip);
-                            ModuleLog.line("(IE|InstantUpload) ✅ swapped in gallery bitmap");
+                            ModuleLog.line("(IE|InstantUpload) swapped in gallery bitmap");
                         }
                     } catch (Throwable t) {
-                        ModuleLog.line("(IE|InstantUpload) ❌ swap: " + t);
+                        ModuleLog.line("(IE|InstantUpload) swap: " + t);
                     }
                 }
             });
             FeatureStatusTracker.setHooked("UploadInstants");
-            ModuleLog.line("(IE|InstantUpload) ✅ A02 hooked");
+            ModuleLog.line("(IE|InstantUpload) A02 hooked");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|InstantUpload) ⚠️ swap install: " + t.getMessage());
+            ModuleLog.line("(IE|InstantUpload) swap install: " + t.getMessage());
         }
     }
 
@@ -126,9 +126,9 @@ public class InstantUploadHook {
                 if (m.isSynthetic() || m.isBridge()) continue;
                 try { XposedBridge.hookMethod(m, onActive); n++; } catch (Throwable ignored) {}
             }
-            ModuleLog.line("(IE|InstantUpload) ✅ camera-open hooked (" + n + " VM methods)");
+            ModuleLog.line("(IE|InstantUpload) camera-open hooked (" + n + " VM methods)");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|InstantUpload) ⚠️ camera-open: " + t.getMessage());
+            ModuleLog.line("(IE|InstantUpload) camera-open: " + t.getMessage());
         }
     }
 
@@ -242,9 +242,9 @@ public class InstantUploadHook {
             ((ViewGroup) decor).addView(c);
             chip = c;
             chipHost = act;
-            ModuleLog.line("(IE|InstantUpload) ✅ gallery chip injected");
+            ModuleLog.line("(IE|InstantUpload) gallery chip injected");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|InstantUpload) ❌ chip: " + t);
+            ModuleLog.line("(IE|InstantUpload) chip: " + t);
         }
     }
 
@@ -286,13 +286,13 @@ public class InstantUploadHook {
                                 Toast.makeText(act, I18n.t(act, R.string.ig_instant_upload_ready),
                                         Toast.LENGTH_LONG).show();
                             } catch (Throwable t) {
-                                ModuleLog.line("(IE|InstantUpload) ❌ result: " + t);
+                                ModuleLog.line("(IE|InstantUpload) result: " + t);
                             }
                         }
                     });
-            ModuleLog.line("(IE|InstantUpload) ✅ picker-result hooked");
+            ModuleLog.line("(IE|InstantUpload) picker-result hooked");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|InstantUpload) ⚠️ picker-result: " + t.getMessage());
+            ModuleLog.line("(IE|InstantUpload) picker-result: " + t.getMessage());
         }
     }
 
@@ -323,7 +323,7 @@ public class InstantUploadHook {
             }
             return bmp;
         } catch (Throwable t) {
-            ModuleLog.line("(IE|InstantUpload) ❌ decode: " + t);
+            ModuleLog.line("(IE|InstantUpload) decode: " + t);
             return null;
         }
     }

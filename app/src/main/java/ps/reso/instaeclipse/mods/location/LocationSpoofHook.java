@@ -84,9 +84,9 @@ public class LocationSpoofHook {
                 }
 
                 FeatureStatusTracker.setHooked("SpoofLocation");
-                ModuleLog.line("(InstaEclipse | SpoofLocation): ✅ Hooked LocationManager.");
+                ModuleLog.line("(InstaEclipse | SpoofLocation): Hooked LocationManager.");
             } catch (Throwable t) {
-                ModuleLog.line("(InstaEclipse | SpoofLocation): ❌ Install failed: " + t.getMessage());
+                ModuleLog.line("(InstaEclipse | SpoofLocation): Install failed: " + t.getMessage());
             }
         }
     }

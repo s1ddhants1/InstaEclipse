@@ -229,7 +229,7 @@ public class IGNetworkInterceptor {
             }
 
         } catch (Exception e) {
-            ModuleLog.line("(InstaEclipse | Interceptor): ❌ " + e.getMessage());
+            ModuleLog.line("(InstaEclipse | Interceptor): " + e.getMessage());
         }
     }
 }

@@ -78,7 +78,7 @@ public class HideChatsHook {
             if (n > 0) FeatureStatusTracker.setHooked("HideSpecificChats");
             ModuleLog.line("(IE|HideChats) inbox filter hooked " + n + " method(s)");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|HideChats) ⚠️ inbox filter: " + t.getMessage());
+            ModuleLog.line("(IE|HideChats) inbox filter: " + t.getMessage());
         }
     }
 
@@ -113,9 +113,9 @@ public class HideChatsHook {
         for (String act : new String[]{"com.instagram.modal.ModalActivity",
                 "com.instagram.mainactivity.InstagramMainActivity"}) {
             try { XposedHelpers.findAndHookMethod(act, classLoader, "onResume", resume); }
-            catch (Throwable t) { ModuleLog.line("(IE|HideChats) ⚠️ hook " + act + ": " + t.getMessage()); }
+            catch (Throwable t) { ModuleLog.line("(IE|HideChats) hook " + act + ": " + t.getMessage()); }
         }
-        ModuleLog.line("(IE|HideChats) ✅ installed");
+        ModuleLog.line("(IE|HideChats) installed");
     }
 
     @SuppressLint("DiscouragedApi")
@@ -194,7 +194,7 @@ public class HideChatsHook {
             catch (Throwable t) { target.addView(btn); }
             return true;
         } catch (Throwable t) {
-            ModuleLog.line("(IE|HideChats) ⚠️ inject: " + t.getMessage());
+            ModuleLog.line("(IE|HideChats) inject: " + t.getMessage());
             return false;
         }
     }

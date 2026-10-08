@@ -136,7 +136,7 @@ public class StoryDownloadHook {
             }
             if (n > 0 && FeatureFlags.cacheStories) FeatureStatusTracker.setHooked("CacheStories");
             ModuleLog.line("(IE|StoryCache) capture hook: " + n + " method(s)");
-        } catch (Throwable t) { ModuleLog.line("(IE|StoryCache) ⚠️ capture hook: " + t.getMessage()); }
+        } catch (Throwable t) { ModuleLog.line("(IE|StoryCache) capture hook: " + t.getMessage()); }
     }
 
     private void captureFromReelItem(Object reelItem) {
@@ -190,7 +190,7 @@ public class StoryDownloadHook {
                     .matcher(MethodMatcher.create()
                             .usingStrings("[INTERNAL] Pause Playback")));
             if (methods.isEmpty()) {
-                ModuleLog.line("(IE|Story) ❌ Button builder method not found");
+                ModuleLog.line("(IE|Story) Button builder method not found");
                 return;
             }
 
@@ -225,9 +225,9 @@ public class StoryDownloadHook {
                 } catch (Throwable ignored) {}
             }
             ModuleLog.line("(IE|Story) button injector hooked " + hooked + " builder(s)");
-            if (hooked == 0) ModuleLog.line("(IE|Story) ❌ No CharSequence[] return type candidate found");
+            if (hooked == 0) ModuleLog.line("(IE|Story) No CharSequence[] return type candidate found");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Story) ❌ Button builder DexKit: " + t);
+            ModuleLog.line("(IE|Story) Button builder DexKit: " + t);
         }
     }
 
@@ -254,11 +254,11 @@ public class StoryDownloadHook {
                             .returnType("void")
                             .usingStrings("[INTERNAL] Pause Playback")));
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Story) ❌ Click handler DexKit: " + t);
+            ModuleLog.line("(IE|Story) Click handler DexKit: " + t);
             return;
         }
         if (methods == null || methods.isEmpty()) {
-            ModuleLog.line("(IE|Story) ❌ Click handler not found");
+            ModuleLog.line("(IE|Story) Click handler not found");
             return;
         }
 
@@ -287,7 +287,7 @@ public class StoryDownloadHook {
                 //    SEPARATE args, so search 'this' AND every argument, not just the holder.
                 Context ctx = findContextAcrossParam(param, effectiveHolder);
                 if (ctx == null) {
-                    ModuleLog.line("(IE|Story) ❌ Context not found");
+                    ModuleLog.line("(IE|Story) Context not found");
                     return;
                 }
 
@@ -314,7 +314,7 @@ public class StoryDownloadHook {
             } catch (Throwable ignored) {}
         }
         if (hooked == 0) {
-            ModuleLog.line("(IE|Story) ❌ no click dispatcher hooked");
+            ModuleLog.line("(IE|Story) no click dispatcher hooked");
             return;
         }
         ModuleLog.line("(IE|Story) click handler hooked " + hooked + " dispatcher(s)");
@@ -808,7 +808,7 @@ public class StoryDownloadHook {
                 ModuleLog.line("(IE|Story|Username) holder is itself a ReelItem");
             }
             if (reelItem == null) {
-                ModuleLog.line("(IE|Story|Username) ❌ ReelItem not found in holder");
+                ModuleLog.line("(IE|Story|Username) ReelItem not found in holder");
                 return null;
             }
 
@@ -849,9 +849,9 @@ public class StoryDownloadHook {
                 } catch (Throwable ignored) {}
             }
 
-            ModuleLog.line("(IE|Story|Username) ❌ username not found on ReelItem methods");
+            ModuleLog.line("(IE|Story|Username) username not found on ReelItem methods");
         } catch (Throwable t) {
-            ModuleLog.line("(IE|Story|Username) ❌ Exception: " + t);
+            ModuleLog.line("(IE|Story|Username) Exception: " + t);
         }
         return null;
     }
@@ -956,11 +956,11 @@ public class StoryDownloadHook {
             final Dialog dialog = new Dialog(ctx);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-            // One tappable card row per available format (📷 photo / 🎬 video with music).
+            // One tappable card row per available format (photo / video with music).
             for (int i = 0; i < choices.size(); i++) {
                 final StoryMedia choice = choices.get(i);
                 TextView row = new TextView(ctx);
-                row.setText((choice.video ? "🎬  " : "📷  ") + labels.get(i));
+                row.setText(labels.get(i));
                 row.setTextColor(textPrim);
                 row.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
                 row.setTypeface(null, Typeface.BOLD);
