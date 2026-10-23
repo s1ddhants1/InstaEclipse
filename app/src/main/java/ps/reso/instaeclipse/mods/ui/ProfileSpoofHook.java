@@ -74,8 +74,10 @@ public final class ProfileSpoofHook {
         hooked += hook(bridge, cl, "media_count", "ProfileSpoofPosts", log, new String[]{"java.lang.Integer", "int", "java.lang.Long", "long"}, 2);
         hooked += hook(bridge, cl, "is_verified", "ProfileSpoofVerified", log, new String[]{"java.lang.Boolean", "boolean"}, 3);
         boolean session = trackAccount(cl);
-        hookHeaderViews();
-        hookAvatarView();
+        if (FeatureFlags.profileSpoofer) {
+            hookHeaderViews();
+            hookAvatarView();
+        }
         hookBioState(bridge, cl, log);
         if (hooked > 0 && session) FeatureStatusTracker.setHooked("ProfileSpoofer");
         ModuleLog.line(TAG + (hooked > 0 && session ? "✅" : "❌") + " getters hooked=" + hooked + log

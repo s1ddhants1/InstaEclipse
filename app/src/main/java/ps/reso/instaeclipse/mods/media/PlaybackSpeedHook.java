@@ -56,14 +56,15 @@ public class PlaybackSpeedHook {
     private static final List<Method> WRAPPERS = new ArrayList<>();
     private static final ThreadLocal<Boolean> APPLYING = new ThreadLocal<>();
     static final float SLOW = 0.5f;
+    private static volatile boolean leftDown;
     private static volatile boolean slowActive;
 
-    /** Hold-for-2x becomes slow motion if enabled; IG's 1x reset ends it. */
+    /** Hold-for-2x on the left half becomes slow motion if enabled; IG's 1x reset ends it. */
     private static float holdSpeed(float f) {
         if (!FeatureFlags.holdLeftSlowMotion) return f;
-        if (f == 2f) {
+        if (f == 2f && leftDown) {
             if (!slowActive) {
-                ModuleLog.line(TAG + "hold slow motion: " + SLOW + "x");
+                ModuleLog.line(TAG + "hold on the left: " + SLOW + "x");
                 slowActive = true;
             }
             return SLOW;
@@ -103,6 +104,30 @@ public class PlaybackSpeedHook {
         installFeed(bridge, cl);
         installHero(bridge, cl);
         installReelScrubber(bridge, cl);
+        installTouchTracker();
+    }
+
+    private void installTouchTracker() {
+        try {
+            XposedBridge.hookMethod(android.app.Activity.class.getDeclaredMethod("dispatchTouchEvent", android.view.MotionEvent.class), new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) {
+                    if (!FeatureFlags.holdLeftSlowMotion) return;
+                    if (param.args[0] instanceof android.view.MotionEvent ev) {
+                        int action = ev.getActionMasked();
+                        if (action == android.view.MotionEvent.ACTION_DOWN) {
+                            float x = ev.getRawX();
+                            int width = ((android.app.Activity) param.thisObject).getResources().getDisplayMetrics().widthPixels;
+                            leftDown = x < (width / 2f);
+                        } else if (action == android.view.MotionEvent.ACTION_UP || action == android.view.MotionEvent.ACTION_CANCEL) {
+                            leftDown = false;
+                        }
+                    }
+                }
+            });
+        } catch (Throwable t) {
+            ModuleLog.line(TAG + "⚠️ touch tracker: " + t);
+        }
     }
 
     // Hero layer: every IG video (feed, reels, stories, highlights) plays through the Hero player
@@ -142,7 +167,7 @@ public class PlaybackSpeedHook {
                 protected void beforeHookedMethod(MethodHookParam param) { ps.reso.instaeclipse.utils.core.JitGuard.tick(param.method);
                     if (param.args[0] != null) HEROES.put(param.args[0], Boolean.TRUE);
                     if (APPLYING.get() == Boolean.TRUE) return;
-                    if (param.args[1] instanceof Float f0 && f0 == 2f && FeatureFlags.holdLeftSlowMotion) {
+                    if (param.args[1] instanceof Float f0 && f0 == 2f && FeatureFlags.holdLeftSlowMotion && leftDown) {
                         param.args[1] = holdSpeed(f0);
                         return;
                     }
@@ -287,7 +312,7 @@ public class PlaybackSpeedHook {
                         protected void beforeHookedMethod(MethodHookParam param) { ps.reso.instaeclipse.utils.core.JitGuard.tick(param.method);
                             remember(param.thisObject);
                             if (APPLYING.get() == Boolean.TRUE) return;
-                            if (param.args[0] instanceof Float f0 && f0 == 2f && FeatureFlags.holdLeftSlowMotion) {
+                            if (param.args[0] instanceof Float f0 && f0 == 2f && FeatureFlags.holdLeftSlowMotion && leftDown) {
                                 param.args[0] = holdSpeed(f0);
                                 return;
                             }
@@ -296,12 +321,6 @@ public class PlaybackSpeedHook {
                                 param.args[0] = speed;
                         }
                     });
-                    for (java.lang.reflect.Constructor<?> c : ps.reso.instaeclipse.utils.core.SafeReflect.constructors(m.getDeclaringClass())) {
-                        XposedBridge.hookMethod(c, new XC_MethodHook() {
-                            @Override
-                            protected void afterHookedMethod(MethodHookParam param) { ps.reso.instaeclipse.utils.core.JitGuard.tick(param.method); remember(param.thisObject); }
-                        });
-                    }
                     storyHooks++;
                 }
             }

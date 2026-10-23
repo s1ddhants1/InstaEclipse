@@ -115,7 +115,7 @@ public class ForceReelQualityHook {
 
                         Object chosen = pickBestQuality(versions, FeatureFlags.forceReelQuality, finalHeightGetterName);
                         if (chosen != null) {
-                            param.setResult(Collections.singletonList(chosen));
+                            param.setResult(new java.util.ArrayList<>(Collections.singletonList(chosen)));
                         }
                     } catch (Throwable t) {
                         ModuleLog.line("(InstaEclipse | ForceReelQuality): ❌ hook body – " + t);
